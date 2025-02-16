@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"id": "cloudclient",
+	"id": "josefclient",
 	"version": "${version}",
-	"name": "cloudClient",
+	"name": "josefclient",
 	"description": "This is an example description! Tell everyone what your mod is about!",
 	"authors": [
 		"Me!"
@@ -12,32 +12,23 @@
 		"sources": "https://github.com/FabricMC/fabric-example-mod"
 	},
 	"license": "CC0-1.0",
-	"icon": "assets/cloudclient/icon.png",
+	"icon": "assets/josefclient/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			{
-				"value": "at.cloudmesh.CloudClient",
-				"adapter": "kotlin"
-			}
+			"at.korny.Josefclient"
 		],
 		"client": [
-			{
-				"value": "at.cloudmesh.CloudClientClient",
-				"adapter": "kotlin"
-			}
+			"at.korny.JosefclientClient"
 		],
 		"fabric-datagen": [
-			{
-				"value": "at.cloudmesh.CloudClientDataGenerator",
-				"adapter": "kotlin"
-			}
+			"at.korny.JosefclientDataGenerator"
 		]
 	},
 	"mixins": [
-		"cloudclient.mixins.json",
+		"josefclient.mixins.json",
 		{
-			"config": "cloudclient.client.mixins.json",
+			"config": "josefclient.client.mixins.json",
 			"environment": "client"
 		}
 	],
@@ -45,8 +36,7 @@
 		"fabricloader": ">=0.16.10",
 		"minecraft": "~1.21.3",
 		"java": ">=21",
-		"fabric-api": "*",
-		"fabric-language-kotlin": "*"
+		"fabric-api": "*"
 	},
 	"suggests": {
 		"another-mod": "*"

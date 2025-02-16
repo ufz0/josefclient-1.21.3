@@ -1,6 +1,6 @@
 {
 	"required": true,
-	"package": "at.cloudmesh.mixin.client",
+	"package": "at.korny.mixin.client",
 	"compatibilityLevel": "JAVA_21",
 	"client": [
 		"ExampleClientMixin"

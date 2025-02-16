@@ -1,4 +1,4 @@
-package at.cloudmesh.mixin;
+package at.korny.mixin;
 
 import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;
