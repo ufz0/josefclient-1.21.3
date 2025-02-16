@@ -11,10 +11,5 @@ public class JosefclientClient implements ClientModInitializer {
 			System.out.println("Josefclient " + i); //josef
 		}
 
-		while(true)
-		{
-			int kornyishorny = 0;
-			kornyishorny++;
-		}
 	}
 }
