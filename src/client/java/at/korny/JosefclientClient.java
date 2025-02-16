@@ -1,9 +1,13 @@
 package at.korny;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.MinecraftVersion;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import static net.minecraft.server.command.CommandManager.*;
 
@@ -20,5 +24,14 @@ public class JosefclientClient implements ClientModInitializer {
 
 					return 1;
 				})));
+		HudRenderCallback.EVENT.register(this::onHudRender);
+	}
+
+	private void onHudRender(DrawContext context, RenderTickCounter renderTickCounter) {
+		MinecraftClient client = MinecraftClient.getInstance();
+		int fps = FPSHelper.getFPS();
+		if (client.player != null) {
+			context.drawText(client.textRenderer, String.valueOf(fps), 10, 10, 0xFFFFFF, true);
+		}
 	}
 }
