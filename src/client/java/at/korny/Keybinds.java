@@ -23,9 +23,9 @@ public class Keybinds {
                 CATEGORY // Category (custom or use existing like "key.categories.misc")
         ));
         debug = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.korny.debug", // Translation key
+                "key.korny.spin", // Translation key
                 InputUtil.Type.KEYSYM, // Type (KEYSYM = keyboard, MOUSE = mouse button)
-                GLFW.GLFW_KEY_O, // Default key (Change to your preferred key)
+                GLFW.GLFW_KEY_J,// Default key (Change to your preferred key)
                 CATEGORY // Category (custom or use existing like "key.categories.misc")
         ));
 

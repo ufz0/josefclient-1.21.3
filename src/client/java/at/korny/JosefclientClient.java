@@ -10,7 +10,7 @@ import net.minecraft.text.Text;
 
 public class JosefclientClient implements ClientModInitializer {
 	private boolean rotating = false;
-	private static float rotationSpeed = 2.0f; // Degrees per tick
+	private static float rotationSpeed = 300.0f; // Degrees per tick
 	private float targetYaw = 0.0f;  // The target yaw to rotate towards
 	private float currentYaw = 0.0f; // Current player's body yaw
 
