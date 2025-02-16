@@ -25,10 +25,15 @@ public class JosefclientClient implements ClientModInitializer {
 		Keybinds.register();
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
-			while(Keybinds.myKey.wasPressed()){
+			while(Keybinds.g.wasPressed()){
 				assert client.player != null;
-				showHud = !showHud;
-				client.player.sendMessage(Text.of("HUD:"+showHud), false);
+				showFPS = !showFPS;
+				client.player.sendMessage(Text.of("FPS HUD:"+showFPS), false);
+			}
+			while(Keybinds.h.wasPressed()){
+				assert client.player != null;
+				showCoords = !showCoords;
+				client.player.sendMessage(Text.of("Coords HUD:"+showCoords), false);
 			}
 		});
 		
@@ -39,9 +44,11 @@ public class JosefclientClient implements ClientModInitializer {
 	}
 
 
-	private boolean showHud = true;
+	private boolean showFPS = true;
+	private boolean showCoords = true;
+
 	private void fpsRenderer(DrawContext context, RenderTickCounter renderTickCounter) {
-		if(!showHud) return;
+		if(!showFPS) return;
 		MinecraftClient client = MinecraftClient.getInstance();
 		int fps = FPSHelper.getFPS();
 
@@ -50,7 +57,7 @@ public class JosefclientClient implements ClientModInitializer {
 			}
 	}
 	private void coordsRenderer(DrawContext context, RenderTickCounter renderTickCounter) {
-		if(!showHud) return;
+		if(!showCoords) return;
 
 		MinecraftClient client = MinecraftClient.getInstance();
 
