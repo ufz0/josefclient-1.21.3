@@ -100,6 +100,7 @@ public class JosefclientClient implements ClientModInitializer {
 			context.drawText(client.textRenderer, "[Biome] " + String.valueOf(biome), 10, 55, 0xFFFFFF, true);
 			context.drawText(client.textRenderer, "[Direction] " + direction, 10, 65, 0xFFFFFF, true);
 			context.drawText(client.textRenderer, "[Version]" + Version.version(), 10 , 75, 0xFFFFFF, true);
+			context.drawText(client.textRenderer, "[JosefClient]", 120, 10, 0xFFFFFF, true);
 		}
 	}
 
