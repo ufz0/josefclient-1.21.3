@@ -4,6 +4,6 @@ import net.minecraft.client.MinecraftClient;
 
 public class DayCoutn {
     public static long  DayCount(){
-        return MinecraftClient.getInstance().world.getTime()/24000;
+        return MinecraftClient.getInstance().world.getTimeOfDay()/24000;
     }
 }
