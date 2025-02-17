@@ -14,7 +14,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import java.util.function.BiConsumer;
 
 import static at.korny.DayCoutn.DayCount;
-import static at.korny.Memory.getMemoryUsagePercent;
+import static at.korny.MemoryUsageHelper.getMemoryUsagePercent;
 
 public class JosefclientClient implements ClientModInitializer {
 	private boolean rotating = false;
@@ -150,7 +150,9 @@ public class JosefclientClient implements ClientModInitializer {
 		y += spacing;
 		drawCenteredText.accept("[Memory] " + getMemoryUsagePercent()+"%", y);
 		y += spacing;
-		drawCenteredText.accept("[Day]" + DayCoutn.DayCount(), y);
+		drawCenteredText.accept("[Day] " + DayCoutn.DayCount(), y);
+		y += spacing;
+		drawCenteredText.accept("[Weather] "+weatherHelper.getWeather(), y);
 	}
 
 
