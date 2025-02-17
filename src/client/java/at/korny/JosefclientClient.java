@@ -76,7 +76,7 @@ public class JosefclientClient implements ClientModInitializer {
 		int fps = FPSHelper.getFPS();
 
 		if (client.player != null) {
-			context.drawText(client.textRenderer, "FPS: " + String.valueOf(fps), 10, 10, 0xFFFFFF, true);
+			context.drawText(client.textRenderer, "[FPS] " + String.valueOf(fps), 10, 10, 0xFFFFFF, true);
 		}
 	}
 
