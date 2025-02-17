@@ -8,17 +8,22 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JosefclientClient implements ClientModInitializer {
 	private boolean rotating = false;
 	private static float rotationSpeed = 300.0f; // Degrees per tick
 	private float targetYaw = 0.0f;  // The target yaw to rotate towards
 	private float currentYaw = 0.0f; // Current player's body yaw
+	public static final String MOD_ID = "josefclient";
+	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	@Override
 	public void onInitializeClient() {
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
 		MinecraftClient mcClient = MinecraftClient.getInstance();
+
 		Keybinds.register();
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
