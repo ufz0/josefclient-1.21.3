@@ -13,6 +13,7 @@ import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.function.BiConsumer;
 
+import static at.korny.DayCoutn.DayCount;
 import static at.korny.Memory.getMemoryUsagePercent;
 
 public class JosefclientClient implements ClientModInitializer {
@@ -148,6 +149,8 @@ public class JosefclientClient implements ClientModInitializer {
 		drawCenteredText.accept("[Right CPS] "+ cpsHelper.getRightCPS(),y);
 		y += spacing;
 		drawCenteredText.accept("[Memory] " + getMemoryUsagePercent()+"%", y);
+		y += spacing;
+		drawCenteredText.accept("[Day]" + DayCoutn.DayCount(), y);
 	}
 
 
