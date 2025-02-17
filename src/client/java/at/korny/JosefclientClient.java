@@ -80,7 +80,8 @@ public class JosefclientClient implements ClientModInitializer {
 
 		MinecraftClient client = MinecraftClient.getInstance();
 
-		int x = (int) Math.floor(client.player.getX());
+        assert client.player != null;
+        int x = (int) Math.floor(client.player.getX());
 		int y = (int) Math.floor(client.player.getY());
 		int z = (int) Math.floor(client.player.getZ());
 
