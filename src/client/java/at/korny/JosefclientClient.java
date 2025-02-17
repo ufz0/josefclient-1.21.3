@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 
+import java.util.function.BiConsumer;
+
 public class JosefclientClient implements ClientModInitializer {
 	private boolean rotating = false;
 	private static float rotationSpeed = 300.0f; // Degrees per tick
@@ -59,12 +61,6 @@ public class JosefclientClient implements ClientModInitializer {
 				// Apply the body yaw rotation only (not affecting head yaw)
 				client.player.setYaw(currentYaw);  // Update yaw (affects both body and head)
 				client.player.setBodyYaw(currentYaw); // Update body yaw (only affects the body)
-			}
-			// TODO: finish this
-			if(client.player != null) {
-				String item = client.player.getHandItems().toString();
-				int mainHandItemDamage = client.player.getMainHandStack().getDamage();
-				LOGGER.warn(String.valueOf(mainHandItemDamage));
 			}
 		});
 
@@ -118,17 +114,35 @@ public class JosefclientClient implements ClientModInitializer {
 		if (!showDebug) return;
 
 		MinecraftClient client = MinecraftClient.getInstance();
-		if (client == null || client.textRenderer == null) return;
+		if (client == null || client.textRenderer == null || client.player == null) return;
 
+		PlayerEntity player = client.player;
+
+		// Get screen width & height dynamically
 		int screenWidth = context.getScaledWindowWidth();
 		int screenHeight = context.getScaledWindowHeight();
 
-		int textWidth = client.textRenderer.getWidth("[DEBUG]");
-		int x = ((screenWidth - textWidth)-2) - (textWidth / 2); // Center X
-		PlayerEntity player = client.player;
-		context.drawText(client.textRenderer, "DEBUG MENU", x, 10, 0xFFFFFF, true);
-    	context.drawText(client.textRenderer, "[Version]" + Version.getVersion(), 10 , 75, 0xFFFFFF, true);
-    	context.drawText(client.textRenderer, "[Current Item Durability]" + ItemDurability.getItemDurability(player), 10, 100, 0xFFFFFF, true);
+		// Define base Y position and spacing
+		int y = 10;
+		int spacing = 15; // Space between each line
+
+		// Helper function to center text dynamically
+		BiConsumer<String, Integer> drawCenteredText = (text, yPos) -> {
+			int textWidth = client.textRenderer.getWidth(text);
+			int x = (screenWidth - textWidth) / 2; // Center X
+			context.drawText(client.textRenderer, text, x, yPos, 0xFFFFFF, true);
+		};
+
+		// Draw debug info
+		drawCenteredText.accept("DEBUG MENU", y);
+		y += spacing;
+		drawCenteredText.accept("[Version] " + Version.getVersion(), y);
+		y += spacing;
+
+		// Display durability only if valid
+		if (ItemDurability.getItemDurability(player) != -1) {
+			drawCenteredText.accept("[Durability] " + ItemDurability.getItemDurability(player) + "/" + ItemDurability.getItemMaxDurability(player), y);
+		}
 	}
 
 

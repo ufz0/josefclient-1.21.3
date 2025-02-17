@@ -11,9 +11,17 @@ public class ItemDurability {
         if (!heldItem.isEmpty() && heldItem.isDamageable()) { // Prüft, ob das Item Haltbarkeit hat
             return heldItem.getMaxDamage() - heldItem.getDamage();
         }
-        return -1; // Falls das Item keine Haltbarkeit hat
+        return -1;
 
         //public static int = heldItem.getMaxDamage() - heldItem.getDamage();
+    }
+    public static int getItemMaxDurability(PlayerEntity player) {
+        ItemStack heldItem = player.getMainHandStack();
+        if (!heldItem.isEmpty() && heldItem.isDamageable()) {
+            return heldItem.getMaxDamage();
+        }else{
+            return -1;
+        }
     }
 
 }
