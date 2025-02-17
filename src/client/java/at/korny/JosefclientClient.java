@@ -6,8 +6,8 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +52,12 @@ public class JosefclientClient implements ClientModInitializer {
 				// Apply the body yaw rotation only (not affecting head yaw)
 				client.player.setYaw(currentYaw);  // Update yaw (affects both body and head)
 				client.player.setBodyYaw(currentYaw); // Update body yaw (only affects the body)
-
+			}
+			// TODO: finish this
+			if(client.player != null) {
+				String item = client.player.getHandItems().toString();
+				int mainHandItemDamage = client.player.getMainHandStack().getDamage();
+				LOGGER.warn(String.valueOf(mainHandItemDamage));
 			}
 		});
 
