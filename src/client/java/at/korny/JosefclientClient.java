@@ -109,8 +109,6 @@ public class JosefclientClient implements ClientModInitializer {
 			context.drawText(client.textRenderer, "[Z] " + String.valueOf(z), 10, 45, 0xFFFFFF, true);
 			context.drawText(client.textRenderer, "[Biome] " + String.valueOf(biome), 10, 55, 0xFFFFFF, true);
 			context.drawText(client.textRenderer, "[Direction] " + direction, 10, 65, 0xFFFFFF, true);
-			context.drawText(client.textRenderer, "[Memory] " + getMemoryUsagePercent(), 10, 75, 0xFFFFFF, true);
-
 		}
 	}
 	private void debugRenderer(DrawContext context, RenderTickCounter renderTickCounter) {
@@ -147,9 +145,11 @@ public class JosefclientClient implements ClientModInitializer {
 			drawCenteredText.accept("[Durability] " + ItemDurability.getItemDurability(player) + "/" + ItemDurability.getItemMaxDurability(player), y);
 		}
 		y+= spacing;
-		drawCenteredText.accept("Left CPS:"+ cpsHelper.getLeftCPS(),y);
+		drawCenteredText.accept("[Left CPS] "+ cpsHelper.getLeftCPS(),y);
 		y+= spacing;
-		drawCenteredText.accept("Right CPS:"+ cpsHelper.getRightCPS(),y);
+		drawCenteredText.accept("[Right CPS] "+ cpsHelper.getRightCPS(),y);
+		y += spacing;
+		drawCenteredText.accept("[Memory] " + getMemoryUsagePercent()+"%", y);
 	}
 
 

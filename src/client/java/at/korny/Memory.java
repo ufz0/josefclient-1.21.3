@@ -5,14 +5,15 @@ import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
 
 public class Memory {
-    public static double getMemoryUsagePercent() {
+    public static int getMemoryUsagePercent() {
         MemoryMXBean memoryBean = ManagementFactory.getMemoryMXBean();
         MemoryUsage heapMemoryUsage = memoryBean.getHeapMemoryUsage();
 
         long usedMemory = heapMemoryUsage.getUsed();
         long maxMemory = heapMemoryUsage.getMax();
 
-        return ((double) usedMemory / maxMemory) * 100.0;
+        int percentage = (int) Math.floor(((double) usedMemory / maxMemory) * 100.0);
+        return percentage;
     }
 
     public static void main(String[] args) {
