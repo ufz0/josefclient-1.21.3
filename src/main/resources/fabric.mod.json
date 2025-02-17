@@ -3,9 +3,10 @@
 	"id": "josefclient",
 	"version": "${version}",
 	"name": "josefclient",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "This is Josefclient",
 	"authors": [
-		"Me!"
+		"sl3mey",
+		"Nox"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
