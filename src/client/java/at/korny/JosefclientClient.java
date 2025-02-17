@@ -130,7 +130,7 @@ public class JosefclientClient implements ClientModInitializer {
 		// Helper function to center text dynamically
 		BiConsumer<String, Integer> drawCenteredText = (text, yPos) -> {
 			int textWidth = client.textRenderer.getWidth(text);
-			int x = (screenWidth - textWidth) / 2; // Center X
+			int x = (screenWidth - textWidth) - 10; // Center X
 			context.drawText(client.textRenderer, text, x, yPos, 0xFFFFFF, true);
 		};
 
@@ -145,9 +145,9 @@ public class JosefclientClient implements ClientModInitializer {
 			drawCenteredText.accept("[Durability] " + ItemDurability.getItemDurability(player) + "/" + ItemDurability.getItemMaxDurability(player), y);
 		}
 		y+= spacing;
-		drawCenteredText.accept("Left click CPS:"+ cpsHelper.getLeftCPS(),y);
+		drawCenteredText.accept("Left CPS:"+ cpsHelper.getLeftCPS(),y);
 		y+= spacing;
-		drawCenteredText.accept("Right click CPS:"+ cpsHelper.getRightCPS(),y);
+		drawCenteredText.accept("Right CPS:"+ cpsHelper.getRightCPS(),y);
 	}
 
 
