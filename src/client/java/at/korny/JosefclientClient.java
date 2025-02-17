@@ -1,19 +1,22 @@
 package at.korny;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.network.message.MessageType;
+import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import net.minecraft.entity.player.PlayerEntity;
-
 import java.util.function.BiConsumer;
-
-import static at.korny.DayCoutn.DayCount;
 import static at.korny.MemoryUsageHelper.getMemoryUsagePercent;
 
 public class JosefclientClient implements ClientModInitializer {
@@ -28,8 +31,24 @@ public class JosefclientClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
 		MinecraftClient mcClient = MinecraftClient.getInstance();
-
+		CommandManager.literal("josefclient");
 		Keybinds.register();
+		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
+			// Register the /josef command
+			dispatcher.register(ClientCommandManager.literal("josef")
+					.executes(context -> {
+						MinecraftClient client = MinecraftClient.getInstance();
+						if (client.player != null) {
+							ClientPlayerEntity player = client.player;
+
+							// Send the "josef josef josef" message to the global chat
+							// This simulates the player typing the message in the chat
+							String message = "josef josef josef";
+							player.sendMessage(Text.of(message), false);
+						}
+						return 1; // Return value, typically 1 indicates success
+					}));
+		});
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			cpsHelper.update();
@@ -142,6 +161,8 @@ public class JosefclientClient implements ClientModInitializer {
 		// Display durability only if valid
 		if (ItemDurability.getItemDurability(player) != -1) {
 			drawCenteredText.accept("[Durability] " + ItemDurability.getItemDurability(player) + "/" + ItemDurability.getItemMaxDurability(player), y);
+		}else{
+			drawCenteredText.accept("[Durability] unavailable", y);
 		}
 		y+= spacing;
 		drawCenteredText.accept("[Left CPS] "+ cpsHelper.getLeftCPS(),y);
