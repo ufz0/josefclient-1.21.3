@@ -7,6 +7,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.BlockPos;
 
 public class JosefclientClient implements ClientModInitializer {
 	private boolean rotating = false;
@@ -77,10 +78,16 @@ public class JosefclientClient implements ClientModInitializer {
 		int x = (int) Math.floor(client.player.getX());
 		int y = (int) Math.floor(client.player.getY());
 		int z = (int) Math.floor(client.player.getZ());
+
+		String biome = BiomeHelper.getPlayerBiome();
+		String direction = PlayerDirectionHelper.getCardinalDirection();
+
 		if (client.player != null) {
-			context.drawText(client.textRenderer, "X: " + String.valueOf(x), 10, 20, 0xFFFFFF, true);
-			context.drawText(client.textRenderer, "Y: " + String.valueOf(y), 10, 30, 0xFFFFFF, true);
-			context.drawText(client.textRenderer, "Z: " + String.valueOf(z), 10, 40, 0xFFFFFF, true);
+			context.drawText(client.textRenderer, "X: " + String.valueOf(x), 10, 25, 0xFFFFFF, true);
+			context.drawText(client.textRenderer, "Y: " + String.valueOf(y), 10, 35, 0xFFFFFF, true);
+			context.drawText(client.textRenderer, "Z: " + String.valueOf(z), 10, 45, 0xFFFFFF, true);
+			context.drawText(client.textRenderer, "Biome: " + String.valueOf(biome), 10, 55, 0xFFFFFF, true);
+			context.drawText(client.textRenderer, "Direction: " + direction, 10, 65, 0xFFFFFF, true);
 		}
 	}
 
