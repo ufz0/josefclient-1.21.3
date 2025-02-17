@@ -15,6 +15,8 @@ import net.minecraft.item.ItemStack;
 
 import java.util.function.BiConsumer;
 
+import static at.korny.Memory.getMemoryUsagePercent;
+
 public class JosefclientClient implements ClientModInitializer {
 	private boolean rotating = false;
 	private static float rotationSpeed = 300.0f; // Degrees per tick
@@ -107,7 +109,7 @@ public class JosefclientClient implements ClientModInitializer {
 			context.drawText(client.textRenderer, "[Z] " + String.valueOf(z), 10, 45, 0xFFFFFF, true);
 			context.drawText(client.textRenderer, "[Biome] " + String.valueOf(biome), 10, 55, 0xFFFFFF, true);
 			context.drawText(client.textRenderer, "[Direction] " + direction, 10, 65, 0xFFFFFF, true);
-
+			context.drawText(client.textRenderer, "[Memory] " + getMemoryUsagePercent(), 10, 75, 0xFFFFFF, true);
 
 		}
 	}
