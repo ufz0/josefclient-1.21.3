@@ -10,6 +10,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 
 public class JosefclientClient implements ClientModInitializer {
 	private boolean rotating = false;
@@ -101,12 +103,15 @@ public class JosefclientClient implements ClientModInitializer {
 		String biome = BiomeHelper.getPlayerBiome();
 		String direction = PlayerDirectionHelper.getCardinalDirection();
 
+		PlayerEntity player = client.player;
 		if (client.player != null) {
 			context.drawText(client.textRenderer, "[X] " + String.valueOf(x), 10, 25, 0xFFFFFF, true);
 			context.drawText(client.textRenderer, "[Y] " + String.valueOf(y), 10, 35, 0xFFFFFF, true);
 			context.drawText(client.textRenderer, "[Z] " + String.valueOf(z), 10, 45, 0xFFFFFF, true);
 			context.drawText(client.textRenderer, "[Biome] " + String.valueOf(biome), 10, 55, 0xFFFFFF, true);
 			context.drawText(client.textRenderer, "[Direction] " + direction, 10, 65, 0xFFFFFF, true);
+
+
 		}
 	}
 	private void debugRenderer(DrawContext context, RenderTickCounter renderTickCounter) {
@@ -122,6 +127,8 @@ public class JosefclientClient implements ClientModInitializer {
 		int x = ((screenWidth - textWidth)-2) - (textWidth / 2); // Center X
 
 		context.drawText(client.textRenderer, "DEBUG MENU", x, 10, 0xFFFFFF, true);
+    context.drawText(client.textRenderer, "[Version]" + Version.version(), 10 , 75, 0xFFFFFF, true);
+    context.drawText(client.textRenderer, "[Current Item Durability]" + ItemDurability.getItemDurability(player), 10, 100, 0xFFFFFF, true);
 	}
 
 
