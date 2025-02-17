@@ -103,7 +103,7 @@ public class JosefclientClient implements ClientModInitializer {
 		String biome = BiomeHelper.getPlayerBiome();
 		String direction = PlayerDirectionHelper.getCardinalDirection();
 
-		PlayerEntity player = client.player;
+
 		if (client.player != null) {
 			context.drawText(client.textRenderer, "[X] " + String.valueOf(x), 10, 25, 0xFFFFFF, true);
 			context.drawText(client.textRenderer, "[Y] " + String.valueOf(y), 10, 35, 0xFFFFFF, true);
@@ -125,10 +125,10 @@ public class JosefclientClient implements ClientModInitializer {
 
 		int textWidth = client.textRenderer.getWidth("[DEBUG]");
 		int x = ((screenWidth - textWidth)-2) - (textWidth / 2); // Center X
-
+		PlayerEntity player = client.player;
 		context.drawText(client.textRenderer, "DEBUG MENU", x, 10, 0xFFFFFF, true);
-    context.drawText(client.textRenderer, "[Version]" + Version.version(), 10 , 75, 0xFFFFFF, true);
-    context.drawText(client.textRenderer, "[Current Item Durability]" + ItemDurability.getItemDurability(player), 10, 100, 0xFFFFFF, true);
+    	context.drawText(client.textRenderer, "[Version]" + Version.getVersion(), 10 , 75, 0xFFFFFF, true);
+    	context.drawText(client.textRenderer, "[Current Item Durability]" + ItemDurability.getItemDurability(player), 10, 100, 0xFFFFFF, true);
 	}
 
 
