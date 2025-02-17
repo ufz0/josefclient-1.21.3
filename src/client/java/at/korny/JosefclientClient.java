@@ -41,7 +41,12 @@ public class JosefclientClient implements ClientModInitializer {
 			}
 			while (Keybinds.debug.wasPressed()) {
 				assert client.player != null;
-				rotating = !rotating; // Toggle rotating state
+				showDebug = !showDebug;
+				client.player.sendMessage(Text.of("Debug HUD: " + showDebug), false);
+			}
+			while(Keybinds.rotate.wasPressed()){
+				assert client.player != null;
+				rotating = !rotating;
 			}
 
 			// If rotating is true, incrementally rotate the player smoothly
@@ -67,10 +72,13 @@ public class JosefclientClient implements ClientModInitializer {
 		HudRenderCallback.EVENT.register(this::fpsRenderer);
 		// Render coordinates overlay
 		HudRenderCallback.EVENT.register(this::coordsRenderer);
+		// Render debug overlay
+		HudRenderCallback.EVENT.register(this::debugRenderer);
 	}
 
 	private boolean showFPS = true;
 	private boolean showCoords = true;
+	private boolean showDebug = false;
 
 	private void fpsRenderer(DrawContext context, RenderTickCounter renderTickCounter) {
 		if (!showFPS) return;
@@ -102,11 +110,27 @@ public class JosefclientClient implements ClientModInitializer {
 			context.drawText(client.textRenderer, "[Z] " + String.valueOf(z), 10, 45, 0xFFFFFF, true);
 			context.drawText(client.textRenderer, "[Biome] " + String.valueOf(biome), 10, 55, 0xFFFFFF, true);
 			context.drawText(client.textRenderer, "[Direction] " + direction, 10, 65, 0xFFFFFF, true);
-			context.drawText(client.textRenderer, "[Version]" + Version.version(), 10 , 75, 0xFFFFFF, true);
-			context.drawText(client.textRenderer, "[JosefClient]", 300, 10, 0xFFFFFF, true);
-			context.drawText(client.textRenderer, "[Current Item Durability]" + ItemDurability.getItemDurability(player), 10, 100, 0xFFFFFF, true);
+
+
 		}
 	}
+	private void debugRenderer(DrawContext context, RenderTickCounter renderTickCounter) {
+		if (!showDebug) return;
+
+		MinecraftClient client = MinecraftClient.getInstance();
+		if (client == null || client.textRenderer == null) return;
+
+		int screenWidth = context.getScaledWindowWidth();
+		int screenHeight = context.getScaledWindowHeight();
+
+		int textWidth = client.textRenderer.getWidth("[DEBUG]");
+		int x = ((screenWidth - textWidth)-2) - (textWidth / 2); // Center X
+
+		context.drawText(client.textRenderer, "DEBUG MENU", x, 10, 0xFFFFFF, true);
+    context.drawText(client.textRenderer, "[Version]" + Version.version(), 10 , 75, 0xFFFFFF, true);
+    context.drawText(client.textRenderer, "[Current Item Durability]" + ItemDurability.getItemDurability(player), 10, 100, 0xFFFFFF, true);
+	}
+
 
 	// Smooth lerp function to interpolate between two values
 	private float lerp(float start, float end, float delta) {

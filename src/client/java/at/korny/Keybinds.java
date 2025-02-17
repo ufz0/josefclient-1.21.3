@@ -9,6 +9,8 @@ public class Keybinds {
     public static KeyBinding g;
     public static KeyBinding h;
     public static KeyBinding debug;
+    public static KeyBinding rotate;
+
     public static void register() {
         g = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.korny.fpsToggle", // Translation key
@@ -23,6 +25,12 @@ public class Keybinds {
                 CATEGORY // Category (custom or use existing like "key.categories.misc")
         ));
         debug = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "key.korny.debug", // Translation key
+                InputUtil.Type.KEYSYM, // Type (KEYSYM = keyboard, MOUSE = mouse button)
+                GLFW.GLFW_KEY_F4,// Default key (Change to your preferred key)
+                CATEGORY // Category (custom or use existing like "key.categories.misc")
+        ));
+        rotate = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.korny.spin", // Translation key
                 InputUtil.Type.KEYSYM, // Type (KEYSYM = keyboard, MOUSE = mouse button)
                 GLFW.GLFW_KEY_J,// Default key (Change to your preferred key)
