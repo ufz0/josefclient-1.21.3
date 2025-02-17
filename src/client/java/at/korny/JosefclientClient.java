@@ -18,7 +18,6 @@ public class JosefclientClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
 		MinecraftClient mcClient = MinecraftClient.getInstance();
-
 		Keybinds.register();
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
