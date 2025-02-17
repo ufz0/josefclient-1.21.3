@@ -94,11 +94,12 @@ public class JosefclientClient implements ClientModInitializer {
 		String direction = PlayerDirectionHelper.getCardinalDirection();
 
 		if (client.player != null) {
-			context.drawText(client.textRenderer, "X: " + String.valueOf(x), 10, 25, 0xFFFFFF, true);
-			context.drawText(client.textRenderer, "Y: " + String.valueOf(y), 10, 35, 0xFFFFFF, true);
-			context.drawText(client.textRenderer, "Z: " + String.valueOf(z), 10, 45, 0xFFFFFF, true);
-			context.drawText(client.textRenderer, "Biome: " + String.valueOf(biome), 10, 55, 0xFFFFFF, true);
-			context.drawText(client.textRenderer, "Direction: " + direction, 10, 65, 0xFFFFFF, true);
+			context.drawText(client.textRenderer, "[X] " + String.valueOf(x), 10, 25, 0xFFFFFF, true);
+			context.drawText(client.textRenderer, "[Y] " + String.valueOf(y), 10, 35, 0xFFFFFF, true);
+			context.drawText(client.textRenderer, "[Z] " + String.valueOf(z), 10, 45, 0xFFFFFF, true);
+			context.drawText(client.textRenderer, "[Biome] " + String.valueOf(biome), 10, 55, 0xFFFFFF, true);
+			context.drawText(client.textRenderer, "[Direction] " + direction, 10, 65, 0xFFFFFF, true);
+			context.drawText(client.textRenderer, Version.version()"[Version]" + Version.version();
 		}
 	}
 
