@@ -7,7 +7,10 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.text.Text;
+import net.minecraft.util.Hand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import net.minecraft.entity.player.PlayerEntity;
@@ -22,6 +25,13 @@ public class JosefclientClient implements ClientModInitializer {
 	public static final String MOD_ID = "josefclient";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	private final at.korny.utils.cpsHelper cpsHelper = new cpsHelper();
+
+	private boolean showFPS = true;
+	private boolean showCoords = true;
+	private boolean showWorldInfo = true;
+	private boolean showDebug = false;
+	private boolean gravity = true;
+
 	@Override
 	public void onInitializeClient() {
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
@@ -54,6 +64,19 @@ public class JosefclientClient implements ClientModInitializer {
 				showWorldInfo = !showWorldInfo;
 				client.player.sendMessage(Text.of("World Info: " + showWorldInfo), false);
 			}
+			while(Keybinds.F5.wasPressed()){
+				assert client.player != null;
+				gravity = !gravity;
+				client.player.sendMessage(Text.of("Gravity disabled: " + gravity), false);
+				client.player.setNoGravity(gravity);
+			}
+			while(Keybinds.F6.wasPressed()){
+				assert client.player != null;
+				client.player.sendMessage(Text.of("Hey, you spammed something there!"), false);
+				for(int i = 0; i < 10; i++){
+					client.player.networkHandler.sendChatMessage("Josef! :D");
+				}
+			}
 
 			// If rotating is true, incrementally rotate the player smoothly
 			if (rotating && client.player != null) {
@@ -78,10 +101,6 @@ public class JosefclientClient implements ClientModInitializer {
 		HudRenderCallback.EVENT.register(this::worldRenderer);
 	}
 
-	private boolean showFPS = true;
-	private boolean showCoords = true;
-	private boolean showWorldInfo = true;
-	private boolean showDebug = false;
 
 	private void fpsRenderer(DrawContext context, RenderTickCounter renderTickCounter) {
 		if (!showFPS) return;
