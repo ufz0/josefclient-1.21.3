@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import net.minecraft.entity.player.PlayerEntity;
 import java.util.function.BiConsumer;
 import static at.korny.utils.MemoryUsageHelper.getMemoryUsagePercent;
-import at.korny.utils.*;
 
 public class JosefclientClient implements ClientModInitializer {
 	private boolean rotating = false;
@@ -165,5 +164,7 @@ public class JosefclientClient implements ClientModInitializer {
 		drawCenteredText.accept("[Right CPS] "+ cpsHelper.getRightCPS(),y);
 		y += spacing;
 		drawCenteredText.accept("[Memory] " + getMemoryUsagePercent()+"%", y);
+		y+=spacing;
+		drawCenteredText.accept("[Sprinting] "+sprintStatusHelper.isSprinting(),y);
 	}
 }
