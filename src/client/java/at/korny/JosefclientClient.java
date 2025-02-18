@@ -164,5 +164,7 @@ public class JosefclientClient implements ClientModInitializer {
 		drawCenteredText.accept("[Right CPS] "+ cpsHelper.getRightCPS(),y);
 		y += spacing;
 		drawCenteredText.accept("[Memory] " + getMemoryUsagePercent()+"%", y);
+		y+=spacing;
+		drawCenteredText.accept("[Sprinting] "+sprintStatusHelper.isSprinting(),y);
 	}
 }
