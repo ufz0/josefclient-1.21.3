@@ -1,23 +1,23 @@
 package at.korny;
 
+import at.korny.utils.*;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.network.message.MessageType;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import net.minecraft.entity.player.PlayerEntity;
 import java.util.function.BiConsumer;
-import static at.korny.MemoryUsageHelper.getMemoryUsagePercent;
+import static at.korny.utils.MemoryUsageHelper.getMemoryUsagePercent;
+import at.korny.utils.*;
 
 public class JosefclientClient implements ClientModInitializer {
 	private boolean rotating = false;
@@ -26,7 +26,7 @@ public class JosefclientClient implements ClientModInitializer {
 	private float currentYaw = 0.0f; // Current player's body yaw
 	public static final String MOD_ID = "josefclient";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-	private final cpsHelper cpsHelper = new cpsHelper();
+	private final at.korny.utils.cpsHelper cpsHelper = new cpsHelper();
 	@Override
 	public void onInitializeClient() {
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
@@ -77,7 +77,7 @@ public class JosefclientClient implements ClientModInitializer {
 				targetYaw = client.player.getYaw() + rotationSpeed;
 
 				// Lerp the yaw for smooth rotation
-				currentYaw = lerp(currentYaw, targetYaw, 0.1f);  // 0.1f is the smoothness factor
+				currentYaw = rotationHelper.lerp(currentYaw, targetYaw, 0.1f);  // 0.1f is the smoothness factor
 
 				// Apply the body yaw rotation only (not affecting head yaw)
 				client.player.setYaw(currentYaw);  // Update yaw (affects both body and head)
@@ -155,7 +155,7 @@ public class JosefclientClient implements ClientModInitializer {
 		// Draw debug info
 		drawCenteredText.accept("DEBUG MENU", y);
 		y += spacing;
-		drawCenteredText.accept("[Version] " + Version.getVersion(), y);
+		drawCenteredText.accept("[Server Version] " + VersionHelper.getVersion(), y);
 		y += spacing;
 
 		// Display durability only if valid
@@ -171,15 +171,8 @@ public class JosefclientClient implements ClientModInitializer {
 		y += spacing;
 		drawCenteredText.accept("[Memory] " + getMemoryUsagePercent()+"%", y);
 		y += spacing;
-		drawCenteredText.accept("[Day] " + DayCoutn.DayCount(), y);
+		drawCenteredText.accept("[Day] " + DayCounter.DayCount(), y);
 		y += spacing;
 		drawCenteredText.accept("[Weather] "+weatherHelper.getWeather(), y);
-	}
-
-
-	// Smooth lerp function to interpolate between two values
-	private float lerp(float start, float end, float delta) {
-		float difference = end - start;
-		return start + difference * delta;  // Interpolates smoothly between start and end
 	}
 }

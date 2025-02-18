@@ -1,6 +1,5 @@
-package at.korny;
+package at.korny.utils;
 
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 

@@ -1,4 +1,4 @@
-package at.korny;
+package at.korny.utils;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;

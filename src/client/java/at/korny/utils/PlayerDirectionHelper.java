@@ -1,4 +1,4 @@
-package at.korny;
+package at.korny.utils;
 
 import net.minecraft.client.MinecraftClient;
 
