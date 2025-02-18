@@ -3,6 +3,7 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL;
 
 public class Keybinds {
     public static final String CATEGORY = "Josef / korny client";
@@ -10,6 +11,7 @@ public class Keybinds {
     public static KeyBinding h;
     public static KeyBinding debug;
     public static KeyBinding rotate;
+    public static KeyBinding worldInfo;
 
     public static void register() {
         g = KeyBindingHelper.registerKeyBinding(new KeyBinding(
@@ -36,6 +38,11 @@ public class Keybinds {
                 GLFW.GLFW_KEY_J,// Default key (Change to your preferred key)
                 CATEGORY // Category (custom or use existing like "key.categories.misc")
         ));
-
+        worldInfo = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "key.korny.worldInfo",
+                InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_K,
+                CATEGORY
+        ));
     }
 }

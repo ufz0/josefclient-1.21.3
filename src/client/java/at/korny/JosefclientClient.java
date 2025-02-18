@@ -54,6 +54,11 @@ public class JosefclientClient implements ClientModInitializer {
 				assert client.player != null;
 				rotating = !rotating;
 			}
+			while(Keybinds.worldInfo.wasPressed()){
+				assert client.player != null;
+				showWorldInfo = !showWorldInfo;
+				client.player.sendMessage(Text.of("World Info: " + showWorldInfo), false);
+			}
 
 			// If rotating is true, incrementally rotate the player smoothly
 			if (rotating && client.player != null) {
@@ -74,10 +79,13 @@ public class JosefclientClient implements ClientModInitializer {
 		HudRenderCallback.EVENT.register(this::coordsRenderer);
 		// Render debug overlay
 		HudRenderCallback.EVENT.register(this::debugRenderer);
+		// Render world info overlay
+		HudRenderCallback.EVENT.register(this::worldRenderer);
 	}
 
 	private boolean showFPS = true;
 	private boolean showCoords = true;
+	private boolean showWorldInfo = true;
 	private boolean showDebug = false;
 
 	private void fpsRenderer(DrawContext context, RenderTickCounter renderTickCounter) {
@@ -109,6 +117,15 @@ public class JosefclientClient implements ClientModInitializer {
 			context.drawText(client.textRenderer, "[Z] " + String.valueOf(z), 10, 45, 0xFFFFFF, true);
 			context.drawText(client.textRenderer, "[Biome] " + String.valueOf(biome), 10, 55, 0xFFFFFF, true);
 			context.drawText(client.textRenderer, "[Direction] " + direction, 10, 65, 0xFFFFFF, true);
+		}
+	}
+	private void worldRenderer(DrawContext context, RenderTickCounter renderTickCounter) {
+		if (!showWorldInfo) return;
+		MinecraftClient client = MinecraftClient.getInstance();
+
+		if (client.player != null) {
+			context.drawText(client.textRenderer, "[Weather] " + String.valueOf(weatherHelper.getWeather()), 10, 80, 0xFFFFFF, true);
+			context.drawText(client.textRenderer, "[Day] " + String.valueOf(DayCounter.DayCount()), 10, 90, 0xFFFFFF, true);
 		}
 	}
 	private void debugRenderer(DrawContext context, RenderTickCounter renderTickCounter) {
@@ -152,9 +169,5 @@ public class JosefclientClient implements ClientModInitializer {
 		drawCenteredText.accept("[Right CPS] "+ cpsHelper.getRightCPS(),y);
 		y += spacing;
 		drawCenteredText.accept("[Memory] " + getMemoryUsagePercent()+"%", y);
-		y += spacing;
-		drawCenteredText.accept("[Day] " + DayCounter.DayCount(), y);
-		y += spacing;
-		drawCenteredText.accept("[Weather] "+weatherHelper.getWeather(), y);
 	}
 }
