@@ -30,25 +30,8 @@ public class JosefclientClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
-		MinecraftClient mcClient = MinecraftClient.getInstance();
-		CommandManager.literal("josefclient");
+		MinecraftClient mcClient = MinecraftClient.getInstance();;
 		Keybinds.register();
-		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
-			// Register the /josef command
-			dispatcher.register(ClientCommandManager.literal("josef")
-					.executes(context -> {
-						MinecraftClient client = MinecraftClient.getInstance();
-						if (client.player != null) {
-							ClientPlayerEntity player = client.player;
-
-							// Send the "josef josef josef" message to the global chat
-							// This simulates the player typing the message in the chat
-							String message = "josef josef josef";
-							player.sendMessage(Text.of(message), false);
-						}
-						return 1; // Return value, typically 1 indicates success
-					}));
-		});
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			cpsHelper.update();
@@ -106,7 +89,6 @@ public class JosefclientClient implements ClientModInitializer {
 			context.drawText(client.textRenderer, "[FPS] " + String.valueOf(fps), 10, 10, 0xFFFFFF, true);
 		}
 	}
-
 	private void coordsRenderer(DrawContext context, RenderTickCounter renderTickCounter) {
 		if (!showCoords) return;
 
