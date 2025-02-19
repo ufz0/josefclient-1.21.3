@@ -19,23 +19,25 @@ import java.util.function.BiConsumer;
 import static at.korny.utils.MemoryUsageHelper.getMemoryUsagePercent;
 
 public class JosefclientClient implements ClientModInitializer {
+
+	public static final String MOD_ID = "josefclient";
+	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+	private final at.korny.utils.cpsHelper cpsHelper = new cpsHelper();
+	private String biome;
+
 	private boolean rotating = false;
 	private static float rotationSpeed = 300.0f; // Degrees per tick
 	private float targetYaw = 0.0f;  // The target yaw to rotate towards
 	private float currentYaw = 0.0f; // Current player's body yaw
-	public static final String MOD_ID = "josefclient";
-	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-	private final at.korny.utils.cpsHelper cpsHelper = new cpsHelper();
+	public static boolean gravity = false;
 
 	public static boolean showFPS = true;
-	public static boolean showCoords = true;
-	public static boolean showWorldInfo = true;
+	public static boolean showCoords = false;
+	public static boolean showWorldInfo = false;
 	public static boolean showDebug = false;
-	public static boolean gravity = false;
-	public static boolean showDurability = true;
-	public static boolean showCPS = true;
+	public static boolean showDurability = false;
+	public static boolean showCPS = false;
 
-	private String biome;
 
 	@Override
 	public void onInitializeClient() {
@@ -68,8 +70,6 @@ public class JosefclientClient implements ClientModInitializer {
 			while(Keybinds.worldInfo.wasPressed()){
 				assert client.player != null;
 				showWorldInfo = !showWorldInfo;
-				showDurability = !showDurability;
-				showCPS = !showCPS;
 				client.player.sendMessage(Text.of("World Info: " + showWorldInfo), false);
 			}
 			while(Keybinds.F5.wasPressed()){
@@ -102,8 +102,6 @@ public class JosefclientClient implements ClientModInitializer {
 		HudRenderCallback.EVENT.register(this::coordsRenderer);
 		// Render debug overlay
 		HudRenderCallback.EVENT.register(this::debugRenderer);
-		// Render world info overlay
-		HudRenderCallback.EVENT.register(this::worldRenderer);
 		//Render CPS
 		HudRenderCallback.EVENT.register(this::CPS);
 		//Renders Durability
@@ -119,7 +117,6 @@ public class JosefclientClient implements ClientModInitializer {
 			context.drawText(client.textRenderer, "[FPS] " + String.valueOf(fps), 10, 15, 0xFFFFFF, true);
 		}
 	}
-
 	private void coordsRenderer(DrawContext context, RenderTickCounter renderTickCounter) {
 		if (!showCoords) return;
 
@@ -141,11 +138,6 @@ public class JosefclientClient implements ClientModInitializer {
 			context.drawText(client.textRenderer, "[Direction] " + direction, 10, 55, 0xFFFFFF, true);
 		}
 	}
-	private void worldRenderer(DrawContext context, RenderTickCounter renderTickCounter) {
-		if (!showWorldInfo) return;
-		MinecraftClient client = MinecraftClient.getInstance();
-
-	}
 	private void CPS(DrawContext context, RenderTickCounter renderTickCounter){
 		if(!showCPS) return;
 		MinecraftClient client = MinecraftClient.getInstance();
@@ -160,7 +152,7 @@ public class JosefclientClient implements ClientModInitializer {
 
 		if (ItemDurability.getItemDurability(client.player) != -1) {
 			if (client.player != null) {
-				context.drawText(client.textRenderer, "[Durability]" + ItemDurability.getItemDurability(client.player) + "/" + ItemDurability.getItemMaxDurability(client.player), 10, 110, 0xFFFFF, true);
+				context.drawText(client.textRenderer, "[Durability]" + ItemDurability.getItemDurability(client.player) + "/" + ItemDurability.getItemMaxDurability(client.player), 10, 80, 0xFFFFF, true);
 			}
 		}
 	}

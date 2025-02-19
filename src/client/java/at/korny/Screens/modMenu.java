@@ -9,6 +9,8 @@ import net.minecraft.text.Text;
 public class modMenu extends Screen {
     private ButtonWidget fpsButton;
     private ButtonWidget coordinatesToggle;
+    private ButtonWidget cpsToggle;
+    private ButtonWidget durabilityToggle;
 
     public modMenu() {
         super(Text.literal("Josef Client Modmenu"));
@@ -38,6 +40,15 @@ public class modMenu extends Screen {
         coordinatesToggle = this.addDrawableChild(ButtonWidget.builder(Text.literal("Loading..." + JosefclientClient.showCoords), button -> {
             at.korny.JosefclientClient.showCoords = !at.korny.JosefclientClient.showCoords;
         }).dimensions(this.width / 2 - 60, startY + 2 * (buttonHeight + verticalSpacing), 120, buttonHeight).build()); // Adjust Y position
+
+        cpsToggle = this.addDrawableChild(ButtonWidget.builder(Text.literal("Loading..." + JosefclientClient.showCoords), button -> {
+            JosefclientClient.showCPS = !JosefclientClient.showCPS;
+        }).dimensions(this.width / 2 - 60, startY + 3 * (buttonHeight + verticalSpacing), 120, buttonHeight).build()); // Adjust Y position
+
+        durabilityToggle = this.addDrawableChild(ButtonWidget.builder(Text.literal("Loading..." + JosefclientClient.showCoords), button -> {
+            JosefclientClient.showDurability = !JosefclientClient.showDurability;
+        }).dimensions(this.width / 2 - 60, startY + 4 * (buttonHeight + verticalSpacing), 120, buttonHeight).build()); // Adjust Y position
+
     }
 
 
@@ -46,13 +57,11 @@ public class modMenu extends Screen {
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
 
         super.render(context, mouseX, mouseY, delta);
-        context.draw();
-        //super.renderBackground(context, mouseX, mouseY, delta);
-        //super.clearChildren();
-        super.clearAndInit();
 
         fpsButton.setMessage(Text.literal("Display FPS: " + JosefclientClient.showFPS));
         coordinatesToggle.setMessage(Text.literal("Display location: " + JosefclientClient.showCoords));
+        cpsToggle.setMessage(Text.literal("Display CPS: " + JosefclientClient.showCPS));
+        durabilityToggle.setMessage(Text.literal("Display durability: " + JosefclientClient.showDurability));
     }
 
 
