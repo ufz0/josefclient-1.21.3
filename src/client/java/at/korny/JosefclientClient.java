@@ -1,5 +1,6 @@
 package at.korny;
 
+import at.korny.Screens.modMenu;
 import at.korny.utils.*;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -79,10 +80,8 @@ public class JosefclientClient implements ClientModInitializer {
 			}
 			while(Keybinds.F6.wasPressed()){
 				assert client.player != null;
-				client.player.sendMessage(Text.of("Hey, you spammed something there!"), false);
-				for(int i = 0; i < 10; i++){
-					client.player.networkHandler.sendChatMessage("Josef! :D");
-				}
+				client.player.sendMessage(Text.of("This feature is comming soon!"), false);
+				MinecraftClient.getInstance().setScreen(new modMenu());
 			}
 
 			// If rotating is true, incrementally rotate the player smoothly

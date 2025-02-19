@@ -53,7 +53,7 @@ public class Keybinds {
                 CATEGORY
         ));
         F6 = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.korny.sayJosef",
+                "key.korny.overlay",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_F6,
                 CATEGORY
