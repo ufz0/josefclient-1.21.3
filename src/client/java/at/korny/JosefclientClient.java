@@ -152,7 +152,7 @@ public class JosefclientClient implements ClientModInitializer {
 
 		if (ItemDurability.getItemDurability(client.player) != -1) {
 			if (client.player != null) {
-				context.drawText(client.textRenderer, "[Durability]" + ItemDurability.getItemDurability(client.player) + "/" + ItemDurability.getItemMaxDurability(client.player), 10, 80, 0xFFFFF, true);
+				context.drawText(client.textRenderer, "[Durability] " + ItemDurability.getItemDurability(client.player) + "/" + ItemDurability.getItemMaxDurability(client.player), 10, 80, 0xFFFFF, true);
 			}
 		}
 	}
