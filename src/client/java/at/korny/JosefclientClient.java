@@ -155,11 +155,29 @@ public class JosefclientClient implements ClientModInitializer {
 	private void Durability(DrawContext context, RenderTickCounter renderTickCounter){
 		if(!showDurability) return;
 		MinecraftClient client = MinecraftClient.getInstance();
+		int durability = ItemDurability.getItemDurability(client.player);
 
-		if (ItemDurability.getItemDurability(client.player) != -1) {
-			if (client.player != null) {
-				context.drawText(client.textRenderer, "[Durability] " + ItemDurability.getItemDurability(client.player) + "/" + ItemDurability.getItemMaxDurability(client.player), 10, 80, 0xFFFFF, true);
+		if (durability != -1 && client.player != null) {
+			durability = ItemDurability.getItemDurability(client.player);
+			int maxDurability = ItemDurability.getItemMaxDurability(client.player);
+			double durabilityPercent = ((double) durability / maxDurability) * 100;
+
+			int green = 0x008000;
+			int yellow = 0xFFFF00;
+			int red = 0xFF0000;
+			int color;
+			if(durabilityPercent > 75){
+				color = green;
+			}else if (durabilityPercent > 25 && durabilityPercent < 75) {
+				color = yellow;
+			}else if(durabilityPercent < 25){
+				color = red;
+			}else{
+				LOGGER.error("Error in searching Durability, found % :"+String.valueOf(durabilityPercent));
+				color = 0xFFFFFF;
 			}
+			context.drawText(client.textRenderer, "[Durability] " + durability + "/" + maxDurability, 10, 80, color, true);
+
 		}
 	}
 	private void debugRenderer(DrawContext context, RenderTickCounter renderTickCounter) {
