@@ -6,10 +6,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 
-import java.util.List;
-
-import static java.util.Collections.fill;
-
 public class modMenu extends Screen {
     private ButtonWidget fpsButton;
     private ButtonWidget coordinatesToggle;
@@ -33,11 +29,12 @@ public class modMenu extends Screen {
             this.client.player.closeScreen();
         }).dimensions(this.width / 2 - 60, startY, 120, buttonHeight).build()); // Center horizontally and use calculated Y
 
+        // FPS toggle
         fpsButton = this.addDrawableChild(ButtonWidget.builder(Text.literal("Loading..." + at.korny.JosefclientClient.showFPS), button -> {
             at.korny.JosefclientClient.showFPS = !at.korny.JosefclientClient.showFPS;
         }).dimensions(this.width / 2 - 60, startY + buttonHeight + verticalSpacing, 120, buttonHeight).build()); // Adjust Y position
 
-        // Coordinates toggle button
+        // Coordinate Toggle
         coordinatesToggle = this.addDrawableChild(ButtonWidget.builder(Text.literal("Loading..." + JosefclientClient.showCoords), button -> {
             at.korny.JosefclientClient.showCoords = !at.korny.JosefclientClient.showCoords;
         }).dimensions(this.width / 2 - 60, startY + 2 * (buttonHeight + verticalSpacing), 120, buttonHeight).build()); // Adjust Y position
@@ -49,6 +46,10 @@ public class modMenu extends Screen {
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
 
         super.render(context, mouseX, mouseY, delta);
+        context.draw();
+        //super.renderBackground(context, mouseX, mouseY, delta);
+        //super.clearChildren();
+        super.clearAndInit();
 
         fpsButton.setMessage(Text.literal("Display FPS: " + JosefclientClient.showFPS));
         coordinatesToggle.setMessage(Text.literal("Display location: " + JosefclientClient.showCoords));
@@ -59,4 +60,5 @@ public class modMenu extends Screen {
     public boolean shouldCloseOnEsc() {
         return true;
     }
+
 }
