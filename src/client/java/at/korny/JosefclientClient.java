@@ -116,7 +116,7 @@ public class JosefclientClient implements ClientModInitializer {
 		int fps = FPSHelper.getFPS();
 
 		if (client.player != null) {
-			context.drawText(client.textRenderer, "[FPS] " + String.valueOf(fps), 10, 10, 0xFFFFFF, true);
+			context.drawText(client.textRenderer, "[FPS] " + String.valueOf(fps), 10, 15, 0xFFFFFF, true);
 		}
 	}
 
@@ -145,16 +145,13 @@ public class JosefclientClient implements ClientModInitializer {
 		if (!showWorldInfo) return;
 		MinecraftClient client = MinecraftClient.getInstance();
 
-		if (client.player != null) {
-			context.drawText(client.textRenderer, "[Day] " + String.valueOf(DayCounter.DayCount()), 10, 90, 0xFFFFFF, true);
-		}
 	}
 	private void CPS(DrawContext context, RenderTickCounter renderTickCounter){
 		if(!showCPS) return;
 		MinecraftClient client = MinecraftClient.getInstance();
 
 		if(client.player != null){
-			context.drawText(client.textRenderer, "[CPS]" + cpsHelper.getLeftCPS() + "|" + cpsHelper.getRightCPS(), 10, 100, 0xFFFFFF,true);
+			context.drawText(client.textRenderer, "[CPS]" + cpsHelper.getLeftCPS() + "|" + cpsHelper.getRightCPS(), 10, 70, 0xFFFFFF,true);
 		}
 	}
 	private void Durability(DrawContext context, RenderTickCounter renderTickCounter){
