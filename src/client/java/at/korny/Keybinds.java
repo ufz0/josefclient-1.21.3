@@ -12,6 +12,8 @@ public class Keybinds {
     public static KeyBinding debug;
     public static KeyBinding rotate;
     public static KeyBinding worldInfo;
+    public static KeyBinding F5;
+    public static KeyBinding F6;
 
     public static void register() {
         g = KeyBindingHelper.registerKeyBinding(new KeyBinding(
@@ -42,6 +44,18 @@ public class Keybinds {
                 "key.korny.worldInfo",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_K,
+                CATEGORY
+        ));
+        F5 = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "key.korny.toggleGravity",
+                InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_F5,
+                CATEGORY
+        ));
+        F6 = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "key.korny.sayJosef",
+                InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_F6,
                 CATEGORY
         ));
     }
