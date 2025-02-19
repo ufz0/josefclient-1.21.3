@@ -25,7 +25,7 @@ public class modMenu extends Screen {
         int verticalSpacing = 10;
 
         // Buttons hinzufügen
-        buttons.add(this.addDrawableChild(ButtonWidget.builder(Text.literal("Exit"), button -> this.client.player.closeScreen())
+        buttons.add(this.addDrawableChild(ButtonWidget.builder(Text.literal("Close"), button -> this.client.player.closeScreen())
                 .dimensions(0, 0, buttonWidth, buttonHeight).build()));
         buttons.add(this.addDrawableChild(ButtonWidget.builder(Text.literal("Loading..."), button -> {
             JosefclientClient.showFPS = !JosefclientClient.showFPS;
@@ -69,7 +69,10 @@ public class modMenu extends Screen {
         buttons.get(4).setMessage(Text.literal("Display durability: " + JosefclientClient.showDurability));
         buttons.get(5).setMessage(Text.literal("Display debug: " + JosefclientClient.showDebug));
     }
+    @Override
+    public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
 
+    }
     @Override
     public boolean shouldCloseOnEsc() {
         return true;
