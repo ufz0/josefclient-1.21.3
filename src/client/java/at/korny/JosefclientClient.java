@@ -8,10 +8,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.text.Text;
-import net.minecraft.util.Hand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import net.minecraft.entity.player.PlayerEntity;
@@ -98,7 +95,7 @@ public class JosefclientClient implements ClientModInitializer {
 				client.player.setYaw(currentYaw);  // Update yaw (affects both body and head)
 				client.player.setBodyYaw(currentYaw); // Update body yaw (only affects the body)
 			}
-			saveOptions();
+
 		});
 
 		// Render FPS overlay
@@ -111,6 +108,7 @@ public class JosefclientClient implements ClientModInitializer {
 		HudRenderCallback.EVENT.register(this::CPS);
 		//Renders Durability
 		HudRenderCallback.EVENT.register(this::Durability);
+		//saveOptions();
 	}
 
 	private void fpsRenderer(DrawContext context, RenderTickCounter renderTickCounter) {
@@ -227,7 +225,7 @@ public class JosefclientClient implements ClientModInitializer {
 		}
 	}
 
-	private static void saveOptions() {
+	public static void saveOptions() {
 		File optionsFile = new File(MinecraftClient.getInstance().runDirectory, "options.txt");
 
 		try {

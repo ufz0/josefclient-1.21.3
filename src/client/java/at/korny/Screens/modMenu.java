@@ -34,19 +34,22 @@ public class modMenu extends Screen {
         // FPS toggle
         fpsButton = this.addDrawableChild(ButtonWidget.builder(Text.literal("Loading..." + at.korny.JosefclientClient.showFPS), button -> {
             at.korny.JosefclientClient.showFPS = !at.korny.JosefclientClient.showFPS;
+            at.korny.JosefclientClient.saveOptions();
         }).dimensions(this.width / 2 - 60, startY + buttonHeight + verticalSpacing, 120, buttonHeight).build()); // Adjust Y position
-
         // Coordinate Toggle
         coordinatesToggle = this.addDrawableChild(ButtonWidget.builder(Text.literal("Loading..." + JosefclientClient.showCoords), button -> {
             at.korny.JosefclientClient.showCoords = !at.korny.JosefclientClient.showCoords;
+            at.korny.JosefclientClient.saveOptions();
         }).dimensions(this.width / 2 - 60, startY + 2 * (buttonHeight + verticalSpacing), 120, buttonHeight).build()); // Adjust Y position
 
         cpsToggle = this.addDrawableChild(ButtonWidget.builder(Text.literal("Loading..." + JosefclientClient.showCoords), button -> {
             JosefclientClient.showCPS = !JosefclientClient.showCPS;
+            at.korny.JosefclientClient.saveOptions();
         }).dimensions(this.width / 2 - 60, startY + 3 * (buttonHeight + verticalSpacing), 120, buttonHeight).build()); // Adjust Y position
 
         durabilityToggle = this.addDrawableChild(ButtonWidget.builder(Text.literal("Loading..." + JosefclientClient.showCoords), button -> {
             JosefclientClient.showDurability = !JosefclientClient.showDurability;
+            at.korny.JosefclientClient.saveOptions();
         }).dimensions(this.width / 2 - 60, startY + 4 * (buttonHeight + verticalSpacing), 120, buttonHeight).build()); // Adjust Y position
 
     }
