@@ -15,7 +15,7 @@ public class BiomeHelper {
         MinecraftClient client = MinecraftClient.getInstance();
 
         if (client.player == null || client.world == null) {
-            return "Unknown";
+            return "Unknown - no world";
         }
 
         BlockPos playerPos = client.player.getBlockPos();

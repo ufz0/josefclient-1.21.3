@@ -27,10 +27,10 @@ public class JosefclientClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
 		MinecraftClient mcClient = MinecraftClient.getInstance();
-		biome = BiomeHelper.getPlayerBiome();
 		Keybinds.register();
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
+			biome = BiomeHelper.getPlayerBiome();
 			cpsHelper.update();
 			while (Keybinds.g.wasPressed()) {
 				assert client.player != null;
@@ -179,10 +179,10 @@ public class JosefclientClient implements ClientModInitializer {
 		y+=spacing;
 		drawCenteredText.accept("[Sprinting] "+sprintStatusHelper.isSprinting(),y);
 		y += spacing;
-		drawCenteredText.accept("[Weather]" + String.valueOf(weatherHelper.getWeather()),y);
+		drawCenteredText.accept("[Weather] " + String.valueOf(weatherHelper.getWeather()),y);
 		y+= spacing;
-		drawCenteredText.accept("[Day]" + String.valueOf(DayCounter.DayCount()),y);
+		drawCenteredText.accept("[Day] " + String.valueOf(DayCounter.DayCount()),y);
 		y+=spacing;
-		drawCenteredText.accept("[Biome]" + String.valueOf(biome),y);
+		drawCenteredText.accept("[Biome] " + String.valueOf(biome),y);
 	}
 }
