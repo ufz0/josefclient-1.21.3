@@ -265,6 +265,7 @@ public class JosefclientClient implements ClientModInitializer {
 
 			// Datei überschreiben
 			Files.write(optionsFile.toPath(), updatedLines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+			LOGGER.info("Saved options");
 		} catch (IOException e) {
 			LOGGER.error("Fehler beim Speichern der Mod-Optionen!", e);
 		}
