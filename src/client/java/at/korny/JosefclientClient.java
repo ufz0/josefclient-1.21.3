@@ -58,16 +58,19 @@ public class JosefclientClient implements ClientModInitializer {
 				assert client.player != null;
 				showFPS = !showFPS;
 				client.player.sendMessage(Text.of("FPS HUD: " + showFPS), false);
+				saveOptions();
 			}
 			while (Keybinds.h.wasPressed()) {
 				assert client.player != null;
 				showCoords = !showCoords;
 				client.player.sendMessage(Text.of("Location HUD: " + showCoords), false);
+				saveOptions();
 			}
 			while (Keybinds.debug.wasPressed()) {
 				assert client.player != null;
 				showDebug = !showDebug;
 				client.player.sendMessage(Text.of("Debug HUD: " + showDebug), false);
+				saveOptions();
 			}
 			while(Keybinds.rotate.wasPressed()){
 				assert client.player != null;
