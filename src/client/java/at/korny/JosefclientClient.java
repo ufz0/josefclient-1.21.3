@@ -2,6 +2,7 @@ package at.korny;
 
 import at.korny.Screens.modMenu;
 import at.korny.utils.*;
+import at.korny.utils.WaypointSystem.WaypointSet;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
@@ -52,6 +53,9 @@ public class JosefclientClient implements ClientModInitializer {
 		Keybinds.register();
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
+			if(client.player != null){
+				WaypointSet.WaypointSet();
+			}
 			biome = BiomeHelper.getPlayerBiome();
 			cpsHelper.update();
 			while (Keybinds.g.wasPressed()) {
@@ -144,7 +148,7 @@ public class JosefclientClient implements ClientModInitializer {
 			context.drawText(client.textRenderer, "[Direction] " + direction, 10, 55, 0xFFFFFF, true);
 		}
 	}
-	private void CPS(DrawContext context, RenderTickCounter renderTickCounter){
+	private void CPS(DrawContext context, RenderTickCounter renderTickCounter){ //CPS Renderer
 		if(!showCPS) return;
 		MinecraftClient client = MinecraftClient.getInstance();
 
