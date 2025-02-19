@@ -54,6 +54,8 @@ public class JosefclientClient implements ClientModInitializer {
 			while(Keybinds.worldInfo.wasPressed()){
 				assert client.player != null;
 				showWorldInfo = !showWorldInfo;
+				showDurability = !showDurability;
+				showCPS = !showCPS;
 				client.player.sendMessage(Text.of("World Info: " + showWorldInfo), false);
 			}
 
@@ -88,7 +90,8 @@ public class JosefclientClient implements ClientModInitializer {
 	private boolean showCoords = true;
 	private boolean showWorldInfo = true;
 	private boolean showDebug = false;
-
+	private boolean showCPS = true;
+	private boolean showDurability = true;
 	private void fpsRenderer(DrawContext context, RenderTickCounter renderTickCounter) {
 		if (!showFPS) return;
 		MinecraftClient client = MinecraftClient.getInstance();
@@ -117,7 +120,7 @@ public class JosefclientClient implements ClientModInitializer {
 			context.drawText(client.textRenderer, "[X] " + String.valueOf(x), 10, 25, 0xFFFFFF, true);
 			context.drawText(client.textRenderer, "[Y] " + String.valueOf(y), 10, 35, 0xFFFFFF, true);
 			context.drawText(client.textRenderer, "[Z] " + String.valueOf(z), 10, 45, 0xFFFFFF, true);
-			context.drawText(client.textRenderer, "[Direction] " + direction, 10, 65, 0xFFFFFF, true);
+			context.drawText(client.textRenderer, "[Direction] " + direction, 10, 55, 0xFFFFFF, true);
 		}
 	}
 	private void worldRenderer(DrawContext context, RenderTickCounter renderTickCounter) {
@@ -129,7 +132,7 @@ public class JosefclientClient implements ClientModInitializer {
 		}
 	}
 	private void CPS(DrawContext context, RenderTickCounter renderTickCounter){
-		if(!showWorldInfo) return;
+		if(!showCPS) return;
 		MinecraftClient client = MinecraftClient.getInstance();
 
 		if(client.player != null){
@@ -137,7 +140,7 @@ public class JosefclientClient implements ClientModInitializer {
 		}
 	}
 	private void Durability(DrawContext context, RenderTickCounter renderTickCounter){
-		if(!showWorldInfo) return;
+		if(!showDurability) return;
 		MinecraftClient client = MinecraftClient.getInstance();
 
 		if (ItemDurability.getItemDurability(client.player) != -1) {
