@@ -22,10 +22,12 @@ public class JosefclientClient implements ClientModInitializer {
 	public static final String MOD_ID = "josefclient";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	private final at.korny.utils.cpsHelper cpsHelper = new cpsHelper();
+	private String biome;
 	@Override
 	public void onInitializeClient() {
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
-		MinecraftClient mcClient = MinecraftClient.getInstance();;
+		MinecraftClient mcClient = MinecraftClient.getInstance();
+		biome = BiomeHelper.getPlayerBiome();
 		Keybinds.register();
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
@@ -76,6 +78,10 @@ public class JosefclientClient implements ClientModInitializer {
 		HudRenderCallback.EVENT.register(this::debugRenderer);
 		// Render world info overlay
 		HudRenderCallback.EVENT.register(this::worldRenderer);
+		//Render CPS
+		HudRenderCallback.EVENT.register(this::CPS);
+		//Renders Durability
+		HudRenderCallback.EVENT.register(this::Durability);
 	}
 
 	private boolean showFPS = true;
@@ -92,6 +98,7 @@ public class JosefclientClient implements ClientModInitializer {
 			context.drawText(client.textRenderer, "[FPS] " + String.valueOf(fps), 10, 10, 0xFFFFFF, true);
 		}
 	}
+
 	private void coordsRenderer(DrawContext context, RenderTickCounter renderTickCounter) {
 		if (!showCoords) return;
 
@@ -102,7 +109,7 @@ public class JosefclientClient implements ClientModInitializer {
 		int y = (int) Math.floor(client.player.getY());
 		int z = (int) Math.floor(client.player.getZ());
 
-		String biome = BiomeHelper.getPlayerBiome();
+
 		String direction = PlayerDirectionHelper.getCardinalDirection();
 
 
@@ -119,8 +126,25 @@ public class JosefclientClient implements ClientModInitializer {
 		MinecraftClient client = MinecraftClient.getInstance();
 
 		if (client.player != null) {
-			context.drawText(client.textRenderer, "[Weather] " + String.valueOf(weatherHelper.getWeather()), 10, 80, 0xFFFFFF, true);
 			context.drawText(client.textRenderer, "[Day] " + String.valueOf(DayCounter.DayCount()), 10, 90, 0xFFFFFF, true);
+		}
+	}
+	private void CPS(DrawContext context, RenderTickCounter renderTickCounter){
+		if(!showWorldInfo) return;
+		MinecraftClient client = MinecraftClient.getInstance();
+
+		if(client.player != null){
+			context.drawText(client.textRenderer, "[CPS]" + cpsHelper.getLeftCPS() + "|" + cpsHelper.getRightCPS(), 10, 100, 0xFFFFFF,true);
+		}
+	}
+	private void Durability(DrawContext context, RenderTickCounter renderTickCounter){
+		if(!showWorldInfo) return;
+		MinecraftClient client = MinecraftClient.getInstance();
+
+		if (ItemDurability.getItemDurability(client.player) != -1) {
+			if (client.player != null) {
+				context.drawText(client.textRenderer, "[Durability]" + ItemDurability.getItemDurability(client.player) + "/" + ItemDurability.getItemMaxDurability(client.player), 10, 110, 0xFFFFF, true);
+			}
 		}
 	}
 	private void debugRenderer(DrawContext context, RenderTickCounter renderTickCounter) {
@@ -150,21 +174,15 @@ public class JosefclientClient implements ClientModInitializer {
 		drawCenteredText.accept("DEBUG MENU", y);
 		y += spacing;
 		drawCenteredText.accept("[Server Version] " + VersionHelper.getVersion(), y);
-		y += spacing;
-
-		// Display durability only if valid
-		if (ItemDurability.getItemDurability(player) != -1) {
-			drawCenteredText.accept("[Durability] " + ItemDurability.getItemDurability(player) + "/" + ItemDurability.getItemMaxDurability(player), y);
-		}else{
-			drawCenteredText.accept("[Durability] unavailable", y);
-		}
 		y+= spacing;
-		drawCenteredText.accept("[Left CPS] "+ cpsHelper.getLeftCPS(),y);
-		y+= spacing;
-		drawCenteredText.accept("[Right CPS] "+ cpsHelper.getRightCPS(),y);
-		y += spacing;
 		drawCenteredText.accept("[Memory] " + getMemoryUsagePercent()+"%", y);
 		y+=spacing;
 		drawCenteredText.accept("[Sprinting] "+sprintStatusHelper.isSprinting(),y);
+		y += spacing;
+		drawCenteredText.accept("[Weather]" + String.valueOf(weatherHelper.getWeather()),y);
+		y+= spacing;
+		drawCenteredText.accept("[Day]" + String.valueOf(DayCounter.DayCount()),y);
+		y+=spacing;
+		drawCenteredText.accept("[Biome]" + String.valueOf(biome),y);
 	}
 }
