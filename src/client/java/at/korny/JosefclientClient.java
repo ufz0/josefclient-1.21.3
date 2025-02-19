@@ -31,6 +31,8 @@ public class JosefclientClient implements ClientModInitializer {
 	private boolean showWorldInfo = true;
 	private boolean showDebug = false;
 	private boolean gravity = true;
+	private boolean showDurability = true;
+	private boolean showCPS = true;
 
 	private String biome;
 
