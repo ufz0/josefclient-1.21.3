@@ -54,21 +54,6 @@ public class JosefclientClient implements ClientModInitializer {
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			biome = BiomeHelper.getPlayerBiome();
 			cpsHelper.update();
-			while (Keybinds.g.wasPressed()) {
-				assert client.player != null;
-				showFPS = !showFPS;
-				client.player.sendMessage(Text.of("FPS HUD: " + showFPS), false);
-			}
-			while (Keybinds.h.wasPressed()) {
-				assert client.player != null;
-				showCoords = !showCoords;
-				client.player.sendMessage(Text.of("Location HUD: " + showCoords), false);
-			}
-			while (Keybinds.debug.wasPressed()) {
-				assert client.player != null;
-				showDebug = !showDebug;
-				client.player.sendMessage(Text.of("Debug HUD: " + showDebug), false);
-			}
 			while(Keybinds.rotate.wasPressed()){
 				assert client.player != null;
 				rotating = !rotating;
@@ -224,7 +209,6 @@ public class JosefclientClient implements ClientModInitializer {
 			LOGGER.error("Failed to load settings!", e);
 		}
 	}
-
 	public static void saveOptions() {
 		File optionsFile = new File(MinecraftClient.getInstance().runDirectory, "options.txt");
 
