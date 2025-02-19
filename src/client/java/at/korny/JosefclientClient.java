@@ -27,13 +27,13 @@ public class JosefclientClient implements ClientModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	private final at.korny.utils.cpsHelper cpsHelper = new cpsHelper();
 
-	private boolean showFPS = true;
-	private boolean showCoords = true;
-	private boolean showWorldInfo = true;
-	private boolean showDebug = false;
-	private boolean gravity = true;
-	private boolean showDurability = true;
-	private boolean showCPS = true;
+	public static boolean showFPS = true;
+	public static boolean showCoords = true;
+	public static boolean showWorldInfo = true;
+	public static boolean showDebug = false;
+	public static boolean gravity = false;
+	public static boolean showDurability = true;
+	public static boolean showCPS = true;
 
 	private String biome;
 
@@ -80,7 +80,6 @@ public class JosefclientClient implements ClientModInitializer {
 			}
 			while(Keybinds.F6.wasPressed()){
 				assert client.player != null;
-				client.player.sendMessage(Text.of("This feature is comming soon!"), false);
 				MinecraftClient.getInstance().setScreen(new modMenu());
 			}
 

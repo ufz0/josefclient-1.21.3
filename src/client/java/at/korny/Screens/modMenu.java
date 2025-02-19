@@ -1,24 +1,59 @@
 package at.korny.Screens;
 
+import at.korny.JosefclientClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 
+import java.util.List;
+
+import static java.util.Collections.fill;
+
 public class modMenu extends Screen {
+    private ButtonWidget fpsButton;
+    private ButtonWidget coordinatesToggle;
+
     public modMenu() {
-        super(Text.literal("My Custom Screen"));
+        super(Text.literal("Josef Client Modmenu"));
     }
+
     @Override
     protected void init() {
-        this.addDrawableChild(ButtonWidget.builder(Text.literal("Exit"), button -> {
-            // Action when button is clicked
-            this.client.player.closeScreen();
-        }).dimensions(10, 20, 100, 20).build());
 
-        this.addDrawableChild(ButtonWidget.builder(Text.literal("Close Game"), button -> {
-            this.client.close();
-        }).dimensions(10, 50, 100, 20).build());
+        int buttonHeight = 20;
+        int verticalSpacing = 10;
+        int totalButtonHeight = 3 * buttonHeight + 2 * verticalSpacing;
+
+
+        int startY = (this.height - totalButtonHeight) / 2;
+
+        // Exit button
+        this.addDrawableChild(ButtonWidget.builder(Text.literal("Exit"), button -> {
+            this.client.player.closeScreen();
+        }).dimensions(this.width / 2 - 60, startY, 120, buttonHeight).build()); // Center horizontally and use calculated Y
+
+        fpsButton = this.addDrawableChild(ButtonWidget.builder(Text.literal("Loading..." + at.korny.JosefclientClient.showFPS), button -> {
+            at.korny.JosefclientClient.showFPS = !at.korny.JosefclientClient.showFPS;
+        }).dimensions(this.width / 2 - 60, startY + buttonHeight + verticalSpacing, 120, buttonHeight).build()); // Adjust Y position
+
+        // Coordinates toggle button
+        coordinatesToggle = this.addDrawableChild(ButtonWidget.builder(Text.literal("Loading..." + JosefclientClient.showCoords), button -> {
+            at.korny.JosefclientClient.showCoords = !at.korny.JosefclientClient.showCoords;
+        }).dimensions(this.width / 2 - 60, startY + 2 * (buttonHeight + verticalSpacing), 120, buttonHeight).build()); // Adjust Y position
     }
+
+
+
+    @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+
+        super.render(context, mouseX, mouseY, delta);
+
+        fpsButton.setMessage(Text.literal("Display FPS: " + JosefclientClient.showFPS));
+        coordinatesToggle.setMessage(Text.literal("Display location: " + JosefclientClient.showCoords));
+    }
+
 
     @Override
     public boolean shouldCloseOnEsc() {
