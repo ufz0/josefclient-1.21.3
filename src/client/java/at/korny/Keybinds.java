@@ -40,12 +40,6 @@ public class Keybinds {
                 GLFW.GLFW_KEY_J,// Default key (Change to your preferred key)
                 CATEGORY // Category (custom or use existing like "key.categories.misc")
         ));
-        worldInfo = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.korny.worldInfo",
-                InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_K,
-                CATEGORY
-        ));
         F5 = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.korny.toggleGravity",
                 InputUtil.Type.KEYSYM,
@@ -53,7 +47,7 @@ public class Keybinds {
                 CATEGORY
         ));
         F6 = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.korny.overlay",
+                "key.korny.modmenu",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_F6,
                 CATEGORY

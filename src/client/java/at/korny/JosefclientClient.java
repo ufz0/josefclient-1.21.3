@@ -15,6 +15,14 @@ import net.minecraft.util.Hand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import net.minecraft.entity.player.PlayerEntity;
+
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import static at.korny.utils.MemoryUsageHelper.getMemoryUsagePercent;
 
@@ -23,6 +31,7 @@ public class JosefclientClient implements ClientModInitializer {
 	public static final String MOD_ID = "josefclient";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	private final at.korny.utils.cpsHelper cpsHelper = new cpsHelper();
+	private static final File optionsFile = new File(MinecraftClient.getInstance().runDirectory, "options.txt");
 	private String biome;
 
 	private boolean rotating = false;
@@ -33,7 +42,6 @@ public class JosefclientClient implements ClientModInitializer {
 
 	public static boolean showFPS = true;
 	public static boolean showCoords = false;
-	public static boolean showWorldInfo = false;
 	public static boolean showDebug = false;
 	public static boolean showDurability = false;
 	public static boolean showCPS = false;
@@ -42,6 +50,7 @@ public class JosefclientClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
+		loadSettings();
 		MinecraftClient mcClient = MinecraftClient.getInstance();
 		Keybinds.register();
 
@@ -67,11 +76,6 @@ public class JosefclientClient implements ClientModInitializer {
 				assert client.player != null;
 				rotating = !rotating;
 			}
-			while(Keybinds.worldInfo.wasPressed()){
-				assert client.player != null;
-				showWorldInfo = !showWorldInfo;
-				client.player.sendMessage(Text.of("World Info: " + showWorldInfo), false);
-			}
 			while(Keybinds.F5.wasPressed()){
 				assert client.player != null;
 				gravity = !gravity;
@@ -94,6 +98,7 @@ public class JosefclientClient implements ClientModInitializer {
 				client.player.setYaw(currentYaw);  // Update yaw (affects both body and head)
 				client.player.setBodyYaw(currentYaw); // Update body yaw (only affects the body)
 			}
+			saveOptions();
 		});
 
 		// Render FPS overlay
@@ -193,5 +198,74 @@ public class JosefclientClient implements ClientModInitializer {
 		drawCenteredText.accept("[Day] " + String.valueOf(DayCounter.DayCount()),y);
 		y+=spacing;
 		drawCenteredText.accept("[Biome] " + String.valueOf(biome),y);
+	}
+
+	private void loadSettings() {
+		if (!optionsFile.exists()) return;
+
+		try (BufferedReader reader = new BufferedReader(new FileReader(optionsFile))) {
+			String line;
+			Map<String, Boolean> settings = new HashMap<>();
+
+			while ((line = reader.readLine()) != null) {
+				if (line.startsWith("josefclient.")) {
+					String[] parts = line.split("=");
+					if (parts.length == 2) {
+						settings.put(parts[0].trim(), Boolean.parseBoolean(parts[1].trim()));
+					}
+				}
+			}
+
+			showFPS = settings.getOrDefault("josefclient.showFPS", true);
+			showCoords = settings.getOrDefault("josefclient.showCoords", false);
+			showDebug = settings.getOrDefault("josefclient.showDebug", false);
+			showDurability = settings.getOrDefault("josefclient.showDurability", false);
+			showCPS = settings.getOrDefault("josefclient.showCPS", false);
+
+		} catch (IOException e) {
+			LOGGER.error("Failed to load settings!", e);
+		}
+	}
+
+	private static void saveOptions() {
+		File optionsFile = new File(MinecraftClient.getInstance().runDirectory, "options.txt");
+
+		try {
+			// Alte Datei einlesen
+			List<String> lines = new ArrayList<>();
+			if (optionsFile.exists()) {
+				lines = Files.readAllLines(optionsFile.toPath());
+			}
+
+			// Mod-Variablen als neue Zeilen hinzufügen oder ersetzen
+			Map<String, String> modOptions = new HashMap<>();
+			modOptions.put("josefclient.showFPS", String.valueOf(showFPS));
+			modOptions.put("josefclient.showCoords", String.valueOf(showCoords));
+			modOptions.put("josefclient.showDebug", String.valueOf(showDebug));
+			modOptions.put("josefclient.showDurability", String.valueOf(showDurability));
+			modOptions.put("josefclient.showCPS", String.valueOf(showCPS));
+
+			// Neue Datei mit aktualisierten Werten schreiben
+			List<String> updatedLines = new ArrayList<>();
+			for (String line : lines) {
+				String key = line.split("=")[0].trim();
+				if (modOptions.containsKey(key)) {
+					updatedLines.add(key + "=" + modOptions.get(key));
+					modOptions.remove(key);
+				} else {
+					updatedLines.add(line);
+				}
+			}
+
+			// Falls neue Werte noch nicht existieren, ans Ende anhängen
+			for (Map.Entry<String, String> entry : modOptions.entrySet()) {
+				updatedLines.add(entry.getKey() + "=" + entry.getValue());
+			}
+
+			// Datei überschreiben
+			Files.write(optionsFile.toPath(), updatedLines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+		} catch (IOException e) {
+			LOGGER.error("Fehler beim Speichern der Mod-Optionen!", e);
+		}
 	}
 }
