@@ -1,6 +1,8 @@
 package at.korny;
 
 import at.korny.Screens.modMenu;
+import at.korny.overlay.Overlay;
+import at.korny.overlay.OverlayRenderer;
 import at.korny.utils.*;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -20,14 +22,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
+
 import static at.korny.utils.MemoryUsageHelper.getMemoryUsagePercent;
 
 public class JosefclientClient implements ClientModInitializer {
 
 	public static final String MOD_ID = "josefclient";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-	private final at.korny.utils.cpsHelper cpsHelper = new cpsHelper();
+	private final cpsHelper cpsHelper = new cpsHelper();
 	private static final File optionsFile = new File(MinecraftClient.getInstance().runDirectory, "options.txt");
 	private String biome;
 
@@ -37,217 +39,160 @@ public class JosefclientClient implements ClientModInitializer {
 	private float currentYaw = 0.0f; // Current player's body yaw
 	public static boolean gravity = false;
 
-	public static boolean showFPS = true;
-	public static boolean showCoords = false;
-	public static boolean showDebug = false;
-	public static boolean showDurability = false;
-	public static boolean showCPS = false;
+	// Instead of separate booleans and position fields, we store overlays in one list.
+	public static List<Overlay> overlays = new ArrayList<>();
 
-	public static int fpsX = 10;
-	public static int fpsY = 15;
-
-	public static boolean isInModMenu = false;
 	@Override
 	public void onInitializeClient() {
-		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
 		MinecraftClient mcClient = MinecraftClient.getInstance();
 		loadSettings();
 		Keybinds.register();
 
+		// Initialize overlays (each with its default position, sample text for hit detection,
+		// and a renderer lambda that draws the overlay).
+		overlays.add(new Overlay("FPS", 10, 15, "[FPS] 000", (context, client, overlay) -> {
+			int fps = FPSHelper.getFPS();
+			context.drawText(client.textRenderer, "[FPS] " + fps, overlay.x, overlay.y, 0xFFFFFF, true);
+		}));
+		overlays.add(new Overlay("Coords", 10, 25, "[X] 000", (context, client, overlay) -> {
+			if (client.player != null) {
+				int x = (int) Math.floor(client.player.getX());
+				int y = (int) Math.floor(client.player.getY());
+				int z = (int) Math.floor(client.player.getZ());
+				String direction = PlayerDirectionHelper.getCardinalDirection();
+				context.drawText(client.textRenderer, "[X] " + x, overlay.x, overlay.y, 0xFFFFFF, true);
+				context.drawText(client.textRenderer, "[Y] " + y, overlay.x, overlay.y + 10, 0xFFFFFF, true);
+				context.drawText(client.textRenderer, "[Z] " + z, overlay.x, overlay.y + 20, 0xFFFFFF, true);
+				context.drawText(client.textRenderer, "[Direction] " + direction, overlay.x, overlay.y + 30, 0xFFFFFF, true);
+			}
+		}));
+		overlays.add(new Overlay("CPS", 10, 70, "[CPS] 00|00", (context, client, overlay) -> {
+			if (client.player != null) {
+				context.drawText(client.textRenderer, "[CPS] " + cpsHelper.getLeftCPS() + "|" + cpsHelper.getRightCPS(), overlay.x, overlay.y, 0xFFFFFF, true);
+			}
+		}));
+		overlays.add(new Overlay("Durability", 10, 80, "[Durability] 000/000", (context, client, overlay) -> {
+			if (client.player != null) {
+				int durability = ItemDurability.getItemDurability(client.player);
+				if (durability != -1) {
+					int maxDurability = ItemDurability.getItemMaxDurability(client.player);
+					double percent = ((double) durability / maxDurability) * 100;
+					int color = (percent > 75) ? 0x008000 : (percent > 25 ? 0xFFFF00 : 0xFF0000);
+					context.drawText(client.textRenderer, "[Durability] " + durability + "/" + maxDurability, overlay.x, overlay.y, color, true);
+				}
+			}
+		}));
+		overlays.add(new Overlay("Debug", 10, 10, "DEBUG MENU", (context, client, overlay) -> {
+			if (client.player != null) {
+				int y = overlay.y;
+				int spacing = 15;
+				context.drawText(client.textRenderer, "DEBUG MENU", overlay.x, y, 0xFFFFFF, true);
+				y += spacing;
+				context.drawText(client.textRenderer, "[Server Version] " + VersionHelper.getVersion(), overlay.x, y, 0xFFFFFF, true);
+				y += spacing;
+				context.drawText(client.textRenderer, "[Memory] " + getMemoryUsagePercent() + "%", overlay.x, y, 0xFFFFFF, true);
+				y += spacing;
+				context.drawText(client.textRenderer, "[Sprinting] " + sprintStatusHelper.isSprinting(), overlay.x, y, 0xFFFFFF, true);
+				y += spacing;
+				context.drawText(client.textRenderer, "[Weather] " + weatherHelper.getWeather(), overlay.x, y, 0xFFFFFF, true);
+				y += spacing;
+				context.drawText(client.textRenderer, "[Day] " + DayCounter.DayCount(), overlay.x, y, 0xFFFFFF, true);
+				y += spacing;
+				context.drawText(client.textRenderer, "[Biome] " + biome, overlay.x, y, 0xFFFFFF, true);
+			}
+		}));
+
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
-			isInModMenu = String.valueOf(client.currentScreen).contains("at.korny.Screens.modMenu");
 			biome = BiomeHelper.getPlayerBiome();
 			cpsHelper.update();
+
 			while (Keybinds.g.wasPressed()) {
-				assert client.player != null;
-				showFPS = !showFPS;
-				client.player.sendMessage(Text.of("FPS HUD: " + showFPS), false);
-				saveOptions();
+				if(client.player != null) {
+					// Toggle FPS overlay visibility
+					toggleOverlay("FPS");
+					client.player.sendMessage(Text.of("FPS HUD: " + getOverlay("FPS").visible), false);
+					saveOptions();
+				}
 			}
 			while (Keybinds.h.wasPressed()) {
-				assert client.player != null;
-				showCoords = !showCoords;
-				client.player.sendMessage(Text.of("Location HUD: " + showCoords), false);
-				saveOptions();
+				if(client.player != null) {
+					toggleOverlay("Coords");
+					client.player.sendMessage(Text.of("Location HUD: " + getOverlay("Coords").visible), false);
+					saveOptions();
+				}
 			}
 			while (Keybinds.debug.wasPressed()) {
-				assert client.player != null;
-				showDebug = !showDebug;
-				client.player.sendMessage(Text.of("Debug HUD: " + showDebug), false);
-				saveOptions();
+				if(client.player != null) {
+					toggleOverlay("Debug");
+					client.player.sendMessage(Text.of("Debug HUD: " + getOverlay("Debug").visible), false);
+					saveOptions();
+				}
 			}
-			while(Keybinds.rotate.wasPressed()){
-				assert client.player != null;
-				rotating = !rotating;
+			while (Keybinds.F6.wasPressed()) {
+				if(client.player != null) {
+					client.setScreen(new modMenu());
+				}
 			}
-			while(Keybinds.F5.wasPressed()){
-				assert client.player != null;
-				gravity = !gravity;
-				client.player.sendMessage(Text.of("Gravity disabled: " + gravity), false);
-				client.player.setNoGravity(gravity);
+			while (Keybinds.rotate.wasPressed()) {
+				if(client.player != null) {
+					rotating = !rotating;
+				}
 			}
-			while(Keybinds.F6.wasPressed()){
-				assert client.player != null;
-				client.setScreen(new modMenu());
+			while (Keybinds.F5.wasPressed()) {
+				if(client.player != null) {
+					gravity = !gravity;
+					client.player.sendMessage(Text.of("Gravity disabled: " + gravity), false);
+					client.player.setNoGravity(gravity);
+				}
 			}
 
-			// If rotating is true, incrementally rotate the player smoothly
 			if (rotating && client.player != null) {
 				targetYaw = client.player.getYaw() + rotationSpeed;
-
-				// Lerp the yaw for smooth rotation
-				currentYaw = rotationHelper.lerp(currentYaw, targetYaw, 0.1f);  // 0.1f is the smoothness factor
-
-				// Apply the body yaw rotation only (not affecting head yaw)
-				client.player.setYaw(currentYaw);  // Update yaw (affects both body and head)
-				client.player.setBodyYaw(currentYaw); // Update body yaw (only affects the body)
+				currentYaw = rotationHelper.lerp(currentYaw, targetYaw, 0.1f);
+				client.player.setYaw(currentYaw);
+				client.player.setBodyYaw(currentYaw);
 			}
 		});
 
-		// Render FPS overlay
-		HudRenderCallback.EVENT.register(this::fpsRenderer);
-		// Render coordinates overlay
-		HudRenderCallback.EVENT.register(this::coordsRenderer);
-		// Render debug overlay
-		HudRenderCallback.EVENT.register(this::debugRenderer);
-		//Render CPS
-		HudRenderCallback.EVENT.register(this::CPS);
-		//Renders Durability
-		HudRenderCallback.EVENT.register(this::Durability);
-		//saveOptions();
-	}
-
-	private void fpsRenderer(DrawContext context, RenderTickCounter renderTickCounter) {
-		if (!showFPS) return;
-		MinecraftClient client = MinecraftClient.getInstance();
-		int fps = FPSHelper.getFPS();
-
-		if (client.player != null) {
-			context.drawText(client.textRenderer, "[FPS] " + String.valueOf(fps), fpsX, fpsY, 0xFFFFFF, true);
-		}
-	}
-	private void coordsRenderer(DrawContext context, RenderTickCounter renderTickCounter) {
-		if (!showCoords) return;
-
-		MinecraftClient client = MinecraftClient.getInstance();
-
-        assert client.player != null;
-        int x = (int) Math.floor(client.player.getX());
-		int y = (int) Math.floor(client.player.getY());
-		int z = (int) Math.floor(client.player.getZ());
-
-
-		String direction = PlayerDirectionHelper.getCardinalDirection();
-
-
-		if (client.player != null) {
-			context.drawText(client.textRenderer, "[X] " + String.valueOf(x), 10, 25, 0xFFFFFF, true);
-			context.drawText(client.textRenderer, "[Y] " + String.valueOf(y), 10, 35, 0xFFFFFF, true);
-			context.drawText(client.textRenderer, "[Z] " + String.valueOf(z), 10, 45, 0xFFFFFF, true);
-			context.drawText(client.textRenderer, "[Direction] " + direction, 10, 55, 0xFFFFFF, true);
-		}
-	}
-	private void CPS(DrawContext context, RenderTickCounter renderTickCounter){
-		if(!showCPS) return;
-		MinecraftClient client = MinecraftClient.getInstance();
-
-		if(client.player != null){
-			context.drawText(client.textRenderer, "[CPS]" + cpsHelper.getLeftCPS() + "|" + cpsHelper.getRightCPS(), 10, 70, 0xFFFFFF,true);
-		}
-	}
-	private void Durability(DrawContext context, RenderTickCounter renderTickCounter){
-		if(!showDurability) return;
-		MinecraftClient client = MinecraftClient.getInstance();
-		int durability = ItemDurability.getItemDurability(client.player);
-
-		if (durability != -1 && client.player != null) {
-			durability = ItemDurability.getItemDurability(client.player);
-			int maxDurability = ItemDurability.getItemMaxDurability(client.player);
-			double durabilityPercent = ((double) durability / maxDurability) * 100;
-
-			int green = 0x008000;
-			int yellow = 0xFFFF00;
-			int red = 0xFF0000;
-			int color;
-			if(durabilityPercent > 75){
-				color = green;
-			}else if (durabilityPercent > 25 && durabilityPercent < 75) {
-				color = yellow;
-			}else if(durabilityPercent < 25){
-				color = red;
-			}else{
-				LOGGER.error("Error in searching Durability, found % :"+String.valueOf(durabilityPercent));
-				color = 0xFFFFFF;
+		// Register one HUD render callback that iterates over all overlays.
+		HudRenderCallback.EVENT.register((context, tickCounter) -> {
+			MinecraftClient client = MinecraftClient.getInstance();
+			for (Overlay overlay : overlays) {
+				overlay.render(context, client);
 			}
-			context.drawText(client.textRenderer, "[Durability] " + durability + "/" + maxDurability, 10, 80, color, true);
+		});
+	}
 
+	// Utility methods for toggling and retrieving overlays by ID
+	public static void toggleOverlay(String id) {
+		Overlay o = getOverlay(id);
+		if (o != null) {
+			o.visible = !o.visible;
 		}
 	}
-	private void debugRenderer(DrawContext context, RenderTickCounter renderTickCounter) {
-		if (!showDebug) return;
-
-		MinecraftClient client = MinecraftClient.getInstance();
-		if (client == null || client.textRenderer == null || client.player == null) return;
-
-		PlayerEntity player = client.player;
-
-		// Get screen width & height dynamically
-		int screenWidth = context.getScaledWindowWidth();
-		int screenHeight = context.getScaledWindowHeight();
-
-		// Define base Y position and spacing
-		int y = 10;
-		int spacing = 15; // Space between each line
-
-		// Helper function to center text dynamically
-		BiConsumer<String, Integer> drawCenteredText = (text, yPos) -> {
-			int textWidth = client.textRenderer.getWidth(text);
-			int x = (screenWidth - textWidth) - 10; // Center X
-			context.drawText(client.textRenderer, text, x, yPos, 0xFFFFFF, true);
-		};
-
-		// Draw debug info
-		drawCenteredText.accept("DEBUG MENU", y);
-		y += spacing;
-		drawCenteredText.accept("[Server Version] " + VersionHelper.getVersion(), y);
-		y+= spacing;
-		drawCenteredText.accept("[Memory] " + getMemoryUsagePercent()+"%", y);
-		y+=spacing;
-		drawCenteredText.accept("[Sprinting] "+sprintStatusHelper.isSprinting(),y);
-		y += spacing;
-		drawCenteredText.accept("[Weather] " + String.valueOf(weatherHelper.getWeather()),y);
-		y+= spacing;
-		drawCenteredText.accept("[Day] " + String.valueOf(DayCounter.DayCount()),y);
-		y+=spacing;
-		drawCenteredText.accept("[Biome] " + String.valueOf(biome),y);
+	public static Overlay getOverlay(String id) {
+		for (Overlay o : overlays) {
+			if (o.id.equals(id)) {
+				return o;
+			}
+		}
+		return null;
 	}
 
 	private void loadSettings() {
 		if (!optionsFile.exists()) return;
-
 		try (BufferedReader reader = new BufferedReader(new FileReader(optionsFile))) {
 			String line;
-			Map<String, Boolean> settings = new HashMap<>();
-
+			Map<String, String> settings = new HashMap<>();
 			while ((line = reader.readLine()) != null) {
 				if (line.startsWith("josefclient.")) {
 					String[] parts = line.split("=");
 					if (parts.length == 2) {
-						settings.put(parts[0].trim(), Boolean.parseBoolean(parts[1].trim()));
+						settings.put(parts[0].trim(), parts[1].trim());
 					}
 				}
 			}
-
-			showFPS = settings.getOrDefault("josefclient.showFPS", true);
-			showCoords = settings.getOrDefault("josefclient.showCoords", false);
-			showDebug = settings.getOrDefault("josefclient.showDebug", false);
-			showDurability = settings.getOrDefault("josefclient.showDurability", false);
-			showCPS = settings.getOrDefault("josefclient.showCPS", false);
-			// TODO: Fix this. Error: Caused by: java.lang.NumberFormatException: For input string: "false"
-//			fpsX = Integer.parseInt(String.valueOf(settings.get("josefclient.fpsX")));
-//			fpsY = Integer.parseInt(String.valueOf(settings.get("josefclient.fpsY")));
-
-
+			// (Optional) Parse overlay positions/visibility from settings if desired.
 		} catch (IOException e) {
 			LOGGER.error("Failed to load settings!", e);
 		}
@@ -255,25 +200,18 @@ public class JosefclientClient implements ClientModInitializer {
 
 	public static void saveOptions() {
 		File optionsFile = new File(MinecraftClient.getInstance().runDirectory, "options.txt");
-
 		try {
-			// Alte Datei einlesen
 			List<String> lines = new ArrayList<>();
 			if (optionsFile.exists()) {
 				lines = Files.readAllLines(optionsFile.toPath());
 			}
-
-			// Mod-Variablen als neue Zeilen hinzufügen oder ersetzen
+			// Save overlay positions and visibility
 			Map<String, String> modOptions = new HashMap<>();
-			modOptions.put("josefclient.showFPS", String.valueOf(showFPS));
-			modOptions.put("josefclient.showCoords", String.valueOf(showCoords));
-			modOptions.put("josefclient.showDebug", String.valueOf(showDebug));
-			modOptions.put("josefclient.showDurability", String.valueOf(showDurability));
-			modOptions.put("josefclient.showCPS", String.valueOf(showCPS));
-			modOptions.put("josefclient.fpsX", String.valueOf(fpsX));
-			modOptions.put("josefclient.fpsY", String.valueOf(fpsY));
-
-			// Neue Datei mit aktualisierten Werten schreiben
+			for (Overlay o : overlays) {
+				modOptions.put("josefclient." + o.id + ".x", String.valueOf(o.x));
+				modOptions.put("josefclient." + o.id + ".y", String.valueOf(o.y));
+				modOptions.put("josefclient." + o.id + ".visible", String.valueOf(o.visible));
+			}
 			List<String> updatedLines = new ArrayList<>();
 			for (String line : lines) {
 				String key = line.split("=")[0].trim();
@@ -284,17 +222,13 @@ public class JosefclientClient implements ClientModInitializer {
 					updatedLines.add(line);
 				}
 			}
-
-			// Falls neue Werte noch nicht existieren, ans Ende anhängen
 			for (Map.Entry<String, String> entry : modOptions.entrySet()) {
 				updatedLines.add(entry.getKey() + "=" + entry.getValue());
 			}
-
-			// Datei überschreiben
 			Files.write(optionsFile.toPath(), updatedLines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 			LOGGER.info("Saved options");
 		} catch (IOException e) {
-			LOGGER.error("Fehler beim Speichern der Mod-Optionen!", e);
+			LOGGER.error("Error saving mod options!", e);
 		}
 	}
 }
