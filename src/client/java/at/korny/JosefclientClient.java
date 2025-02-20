@@ -199,60 +199,82 @@ public class JosefclientClient implements ClientModInitializer {
 	}
 
 	private void loadSettings() {
-		Properties props = new Properties();
-		if (optionsFile.exists()) {
-			try (FileInputStream fis = new FileInputStream(optionsFile)) {
-				props.load(fis);
-			} catch (IOException e) {
-				LOGGER.error("Error reading options file", e);
-			}
-		}
-		// For each overlay, try to load x, y, and visible
-		for (Overlay overlay : overlays) {
-			String xKey = "josefclient." + overlay.id + ".x";
-			String yKey = "josefclient." + overlay.id + ".y";
-			String visKey = "josefclient." + overlay.id + ".visible";
-			String xVal = props.getProperty(xKey);
-			String yVal = props.getProperty(yKey);
-			String visVal = props.getProperty(visKey);
-			if (xVal != null) {
-				try {
-					overlay.x = Integer.parseInt(xVal);
-				} catch (NumberFormatException e) {
-					LOGGER.error("Error parsing x for overlay {}: {}", overlay.id, xVal);
+		if (!optionsFile.exists()) return;
+		try {
+			List<String> lines = Files.readAllLines(optionsFile.toPath());
+			for (String line : lines) {
+				if (!line.contains("=")) continue;
+				String[] parts = line.split("=", 2);
+				if (parts.length != 2) continue;
+				String key = parts[0].trim();
+				String value = parts[1].trim();
+				for (Overlay overlay : overlays) {
+					String prefix = "josefclient." + overlay.id + ".";
+					if (key.equals(prefix + "x")) {
+						try {
+							overlay.x = Integer.parseInt(value);
+						} catch (NumberFormatException e) {
+							LOGGER.error("Error parsing {} for {}: {}", key, overlay.id, value);
+						}
+					} else if (key.equals(prefix + "y")) {
+						try {
+							overlay.y = Integer.parseInt(value);
+						} catch (NumberFormatException e) {
+							LOGGER.error("Error parsing {} for {}: {}", key, overlay.id, value);
+						}
+					} else if (key.equals(prefix + "visible")) {
+						overlay.visible = Boolean.parseBoolean(value);
+					}
 				}
 			}
-			if (yVal != null) {
-				try {
-					overlay.y = Integer.parseInt(yVal);
-				} catch (NumberFormatException e) {
-					LOGGER.error("Error parsing y for overlay {}: {}", overlay.id, yVal);
-				}
-			}
-			if (visVal != null) {
-				overlay.visible = Boolean.parseBoolean(visVal);
-			}
+		} catch (IOException e) {
+			LOGGER.error("Failed to load settings!", e);
 		}
 	}
+
 	public static void saveOptions() {
-		Properties props = new Properties();
-		// Load existing properties to preserve other options
+		// Build our mod options map.
+		Map<String, String> modOptions = new HashMap<>();
+		for (Overlay o : overlays) {
+			modOptions.put("josefclient." + o.id + ".x", String.valueOf(o.x));
+			modOptions.put("josefclient." + o.id + ".y", String.valueOf(o.y));
+			modOptions.put("josefclient." + o.id + ".visible", String.valueOf(o.visible));
+		}
+		// Read existing options.
+		List<String> lines = new ArrayList<>();
 		if (optionsFile.exists()) {
-			try (FileInputStream fis = new FileInputStream(optionsFile)) {
-				props.load(fis);
+			try {
+				lines = Files.readAllLines(optionsFile.toPath());
 			} catch (IOException e) {
 				LOGGER.error("Error reading options file", e);
 			}
 		}
-		// Update our mod’s settings
-		for (Overlay o : overlays) {
-			props.setProperty("josefclient." + o.id + ".x", String.valueOf(o.x));
-			props.setProperty("josefclient." + o.id + ".y", String.valueOf(o.y));
-			props.setProperty("josefclient." + o.id + ".visible", String.valueOf(o.visible));
+		// Create a merged list.
+		List<String> newLines = new ArrayList<>();
+		Set<String> keysFound = new HashSet<>();
+		for (String line : lines) {
+			boolean updated = false;
+			for (Map.Entry<String, String> entry : modOptions.entrySet()) {
+				String key = entry.getKey();
+				if (line.startsWith(key + "=")) {
+					newLines.add(key + "=" + entry.getValue());
+					keysFound.add(key);
+					updated = true;
+					break;
+				}
+			}
+			if (!updated) {
+				newLines.add(line);
+			}
 		}
-		// Store the updated properties back to the file
-		try (FileOutputStream fos = new FileOutputStream(optionsFile)) {
-			props.store(fos, "Josefclient Options");
+		// Append keys that were not already present.
+		for (Map.Entry<String, String> entry : modOptions.entrySet()) {
+			if (!keysFound.contains(entry.getKey())) {
+				newLines.add(entry.getKey() + "=" + entry.getValue());
+			}
+		}
+		try {
+			Files.write(optionsFile.toPath(), newLines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 			LOGGER.info("Saved options");
 		} catch (IOException e) {
 			LOGGER.error("Error saving mod options!", e);
