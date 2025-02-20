@@ -45,11 +45,9 @@ public class JosefclientClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		MinecraftClient mcClient = MinecraftClient.getInstance();
-		loadSettings();
 		Keybinds.register();
 
-		// Initialize overlays (each with its default position, sample text for hit detection,
-		// and a renderer lambda that draws the overlay).
+		// Create overlays first.
 		overlays.add(new Overlay("FPS", 10, 15, "[FPS] 000", (context, client, overlay) -> {
 			int fps = FPSHelper.getFPS();
 			context.drawText(client.textRenderer, "[FPS] " + fps, overlay.x, overlay.y, 0xFFFFFF, true);
@@ -102,13 +100,15 @@ public class JosefclientClient implements ClientModInitializer {
 			}
 		}));
 
+		// Load overlay settings AFTER creation so saved positions/visibility are applied.
+		loadSettings();
+
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			biome = BiomeHelper.getPlayerBiome();
 			cpsHelper.update();
 
 			while (Keybinds.g.wasPressed()) {
 				if(client.player != null) {
-					// Toggle FPS overlay visibility
 					toggleOverlay("FPS");
 					client.player.sendMessage(Text.of("FPS HUD: " + getOverlay("FPS").visible), false);
 					saveOptions();
@@ -192,7 +192,29 @@ public class JosefclientClient implements ClientModInitializer {
 					}
 				}
 			}
-			// (Optional) Parse overlay positions/visibility from settings if desired.
+			// Update each overlay from saved settings if available
+			for (Overlay overlay : overlays) {
+				String xKey = "josefclient." + overlay.id + ".x";
+				String yKey = "josefclient." + overlay.id + ".y";
+				String visibleKey = "josefclient." + overlay.id + ".visible";
+				if (settings.containsKey(xKey)) {
+					try {
+						overlay.x = Integer.parseInt(settings.get(xKey));
+					} catch (NumberFormatException e) {
+						LOGGER.error("Error parsing overlay {} x position", overlay.id, e);
+					}
+				}
+				if (settings.containsKey(yKey)) {
+					try {
+						overlay.y = Integer.parseInt(settings.get(yKey));
+					} catch (NumberFormatException e) {
+						LOGGER.error("Error parsing overlay {} y position", overlay.id, e);
+					}
+				}
+				if (settings.containsKey(visibleKey)) {
+					overlay.visible = Boolean.parseBoolean(settings.get(visibleKey));
+				}
+			}
 		} catch (IOException e) {
 			LOGGER.error("Failed to load settings!", e);
 		}
