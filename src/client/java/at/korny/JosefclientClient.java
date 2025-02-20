@@ -145,11 +145,7 @@ public class JosefclientClient implements ClientModInitializer {
 				MinecraftClient.getInstance().player.sendMessage(Text.literal("Waypoint saved!"), true);
 
 			}
-
-			while (Keybinds.u.wasPressed()) {
-				readAndSendMessage(); // Wegpunkte laden, wenn Taste gedrückt wird
-				client.options.getFov().setValue(30);
-			}
+			
 			if (Keybinds.zoom.isPressed()) {
 				if (!isZooming) {
 					orgFOV = client.options.getFov().getValue();
@@ -162,10 +158,6 @@ public class JosefclientClient implements ClientModInitializer {
 					isZooming = false;
 				}
 			}
-
-
-
-
 
 			while (Keybinds.g.wasPressed()) {
 				if(client.player != null) {
