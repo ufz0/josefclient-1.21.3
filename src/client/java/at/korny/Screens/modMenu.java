@@ -1,7 +1,6 @@
 package at.korny.Screens;
 
 import at.korny.JosefclientClient;
-import at.korny.Keybinds;
 import at.korny.overlay.Overlay;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;

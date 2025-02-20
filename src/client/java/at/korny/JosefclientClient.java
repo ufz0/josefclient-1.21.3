@@ -1,6 +1,7 @@
 package at.korny;
 
 import at.korny.Screens.modMenu;
+import at.korny.Screens.wayPoints;
 import at.korny.overlay.Overlay;
 import at.korny.utils.*;
 import net.fabricmc.api.ClientModInitializer;
@@ -113,11 +114,32 @@ public class JosefclientClient implements ClientModInitializer {
 		options.loadSettings();
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
+
+			if(mcClient.isInSingleplayer() && mcClient.world != null || mcClient.getCurrentServerEntry() != null){
+				String filename;
+				if(MinecraftClient.getInstance().isInSingleplayer())
+				{
+					String worldName = mcClient.getServer().getSaveProperties().getLevelName().toString();
+					filename = worldName +"-waypoints.txt";
+				}else{
+					String serverIP = mcClient.getCurrentServerEntry().toString();
+					filename = serverIP +"-waypoints.txt";
+				}
+				File file = new File(filename);
+				if (!file.exists()) {
+					try {
+						file.createNewFile();
+					} catch (IOException e) {
+						throw new RuntimeException(e);
+					}
+				}
+			}
+
 			biome = BiomeHelper.getPlayerBiome();
 			cpsHelper.update();
 
 			while (Keybinds.n.wasPressed()) {
-				saveWaypoint();
+				saveWaypoint("newest");
 				MinecraftClient.getInstance().player.sendMessage(Text.literal("Waypoint saved!"), true);
 
 			}
@@ -164,6 +186,11 @@ public class JosefclientClient implements ClientModInitializer {
 			while (Keybinds.F6.wasPressed()) {
 				if(client.player != null) {
 					client.setScreen(new modMenu());
+				}
+			}
+			while(Keybinds.F7.wasPressed()){
+				if(client.player != null) {
+					client.setScreen(new wayPoints());
 				}
 			}
 			while (Keybinds.rotate.wasPressed()) {
