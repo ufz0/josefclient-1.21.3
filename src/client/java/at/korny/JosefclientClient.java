@@ -198,7 +198,7 @@ public class JosefclientClient implements ClientModInitializer {
 			while (Keybinds.F5.wasPressed()) {
 				if(client.player != null) {
 					gravity = !gravity;
-					client.player.sendMessage(Text.of("Gravity: " + (gravity ? "OFF":"ON")), true);
+					client.player.sendMessage(Text.of("No Gravity: " + (gravity ? "ON":"OFF")), true);
 					client.player.setNoGravity(gravity);
 				}
 			}
