@@ -2,29 +2,22 @@ package at.korny;
 
 import at.korny.Screens.modMenu;
 import at.korny.overlay.Overlay;
-import at.korny.overlay.OverlayRenderer;
 import at.korny.utils.*;
-import at.korny.utils.WaypointSystem.WaypointGet;
-import at.korny.utils.WaypointSystem.WaypointSet;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import net.minecraft.entity.player.PlayerEntity;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
 import java.util.*;
 
 import static at.korny.utils.MemoryUsageHelper.getMemoryUsagePercent;
 import static at.korny.utils.WaypointSystem.WaypointGet.readAndSendMessage;
 import static at.korny.utils.WaypointSystem.WaypointSet.saveWaypoint;
+import static at.korny.actions.ZoomHelper.ZOOM_FOV;
+import static at.korny.actions.ZoomHelper.originalFov;
 
 public class JosefclientClient implements ClientModInitializer {
 
@@ -38,6 +31,7 @@ public class JosefclientClient implements ClientModInitializer {
 	private float targetYaw = 0.0f;  // The target yaw to rotate towards
 	private float currentYaw = 0.0f; // Current player's body yaw
 	public static boolean gravity = false;
+	public static boolean isCPressed = false;
 
 	// Instead of separate booleans and position fields, we store overlays in one list.
 	public static List<Overlay> overlays = new ArrayList<>();
@@ -131,6 +125,18 @@ public class JosefclientClient implements ClientModInitializer {
 			while (Keybinds.u.wasPressed()) {
 				readAndSendMessage(); // Wegpunkte laden, wenn Taste gedrückt wird
 			}
+			if (Keybinds.c.isPressed()) { // Prüft, ob "C" gedrückt wird
+				if (originalFov == -1) { // Falls das ursprüngliche FOV nicht gespeichert wurde
+					originalFov = client.options.getFov().getValue();
+				}
+				client.options.getFov().setValue((int) ZOOM_FOV); // Setze Zoom-FOV
+			} else { // Falls die Taste losgelassen wird
+				if (originalFov != -1) { // Falls FOV gespeichert wurde
+					client.options.getFov().setValue((int) originalFov); // Ursprüngliches FOV wiederherstellen
+					originalFov = -1; // Reset
+				}
+			}
+
 
 
 

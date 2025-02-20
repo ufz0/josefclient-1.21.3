@@ -11,6 +11,7 @@ public class Keybinds {
     public static KeyBinding h;
     public static KeyBinding n;
     public static KeyBinding u;
+    public static KeyBinding c;
     public static KeyBinding debug;
     public static KeyBinding rotate;
     public static KeyBinding F5;
@@ -40,6 +41,12 @@ public class Keybinds {
                 "key.korny.waypointLoad",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_U,
+                CATEGORY
+        ));
+        c = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "key.korny.zoom",
+                InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_C,
                 CATEGORY
         ));
         debug = KeyBindingHelper.registerKeyBinding(new KeyBinding(
