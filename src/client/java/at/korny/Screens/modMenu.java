@@ -145,6 +145,7 @@ public class modMenu extends Screen {
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         if (draggingOverlay != null) {
             draggingOverlay = null;
+            JosefclientClient.saveOptions();
             return true;
         }
         return super.mouseReleased(mouseX, mouseY, button);

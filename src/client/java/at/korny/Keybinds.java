@@ -14,11 +14,6 @@ public class Keybinds {
     public static KeyBinding worldInfo;
     public static KeyBinding F5;
     public static KeyBinding F6;
-    public static KeyBinding up;
-    public static KeyBinding down;
-    public static KeyBinding left;
-    public static KeyBinding right;
-
     public static void register() {
         g = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.korny.fpsToggle", // Translation key
@@ -54,30 +49,6 @@ public class Keybinds {
                 "key.korny.modmenu",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_F6,
-                CATEGORY
-        ));
-        up = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.korny.moveUP",
-                InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_UP,
-                CATEGORY
-        ));
-        down = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.korny.moveDown",
-                InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_DOWN,
-                CATEGORY
-        ));
-        left = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.korny.moveLeft",
-                InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_LEFT,
-                CATEGORY
-        ));
-        right = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.korny.moveRight",
-                InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_RIGHT,
                 CATEGORY
         ));
     }

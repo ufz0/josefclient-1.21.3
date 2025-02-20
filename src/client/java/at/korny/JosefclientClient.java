@@ -19,10 +19,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static at.korny.utils.MemoryUsageHelper.getMemoryUsagePercent;
 
@@ -202,61 +199,65 @@ public class JosefclientClient implements ClientModInitializer {
 	}
 
 	private void loadSettings() {
-		if (!optionsFile.exists()) return;
-		try {
-			List<String> lines = Files.readAllLines(optionsFile.toPath());
-			Map<String, String> settings = new HashMap<>();
-			// Parse all mod options lines.
-			for (String line : lines) {
-				if (line.startsWith("josefclient.")) {
-					String[] parts = line.split("=", 2);
-					if (parts.length == 2) {
-						settings.put(parts[0].trim(), parts[1].trim());
-					}
+		Properties props = new Properties();
+		if (optionsFile.exists()) {
+			try (FileInputStream fis = new FileInputStream(optionsFile)) {
+				props.load(fis);
+			} catch (IOException e) {
+				LOGGER.error("Error reading options file", e);
+			}
+		}
+		// For each overlay, try to load x, y, and visible
+		for (Overlay overlay : overlays) {
+			String xKey = "josefclient." + overlay.id + ".x";
+			String yKey = "josefclient." + overlay.id + ".y";
+			String visKey = "josefclient." + overlay.id + ".visible";
+			String xVal = props.getProperty(xKey);
+			String yVal = props.getProperty(yKey);
+			String visVal = props.getProperty(visKey);
+			if (xVal != null) {
+				try {
+					overlay.x = Integer.parseInt(xVal);
+				} catch (NumberFormatException e) {
+					LOGGER.error("Error parsing x for overlay {}: {}", overlay.id, xVal);
 				}
 			}
-			for (Overlay overlay : overlays) {
-				String xKey = "josefclient." + overlay.id + ".x";
-				String yKey = "josefclient." + overlay.id + ".y";
-				String visKey = "josefclient." + overlay.id + ".visible";
-				if (settings.containsKey(xKey)) {
-					try {
-						overlay.x = Integer.parseInt(settings.get(xKey));
-					} catch (NumberFormatException e) {
-						LOGGER.error("Error parsing x for overlay {}: {}", overlay.id, settings.get(xKey));
-					}
-				}
-				if (settings.containsKey(yKey)) {
-					try {
-						overlay.y = Integer.parseInt(settings.get(yKey));
-					} catch (NumberFormatException e) {
-						LOGGER.error("Error parsing y for overlay {}: {}", overlay.id, settings.get(yKey));
-					}
-				}
-				if (settings.containsKey(visKey)) {
-					overlay.visible = Boolean.parseBoolean(settings.get(visKey));
+			if (yVal != null) {
+				try {
+					overlay.y = Integer.parseInt(yVal);
+				} catch (NumberFormatException e) {
+					LOGGER.error("Error parsing y for overlay {}: {}", overlay.id, yVal);
 				}
 			}
-		} catch (IOException e) {
-			LOGGER.error("Failed to load settings!", e);
+			if (visVal != null) {
+				overlay.visible = Boolean.parseBoolean(visVal);
+			}
 		}
 	}
-
 	public static void saveOptions() {
-		File optionsFile = new File(MinecraftClient.getInstance().runDirectory, "options.txt");
-		try {
-			List<String> lines = new ArrayList<>();
-			// Overwrite with our mod options.
-			for (Overlay o : overlays) {
-				lines.add("josefclient." + o.id + ".x=" + o.x);
-				lines.add("josefclient." + o.id + ".y=" + o.y);
-				lines.add("josefclient." + o.id + ".visible=" + o.visible);
+		Properties props = new Properties();
+		// Load existing properties to preserve other options
+		if (optionsFile.exists()) {
+			try (FileInputStream fis = new FileInputStream(optionsFile)) {
+				props.load(fis);
+			} catch (IOException e) {
+				LOGGER.error("Error reading options file", e);
 			}
-			Files.write(optionsFile.toPath(), lines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+		}
+		// Update our mod’s settings
+		for (Overlay o : overlays) {
+			props.setProperty("josefclient." + o.id + ".x", String.valueOf(o.x));
+			props.setProperty("josefclient." + o.id + ".y", String.valueOf(o.y));
+			props.setProperty("josefclient." + o.id + ".visible", String.valueOf(o.visible));
+		}
+		// Store the updated properties back to the file
+		try (FileOutputStream fos = new FileOutputStream(optionsFile)) {
+			props.store(fos, "Josefclient Options");
 			LOGGER.info("Saved options");
 		} catch (IOException e) {
 			LOGGER.error("Error saving mod options!", e);
 		}
 	}
+
 
 }
