@@ -14,7 +14,6 @@ public class Keybinds {
     public static KeyBinding worldInfo;
     public static KeyBinding F5;
     public static KeyBinding F6;
-
     public static void register() {
         g = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.korny.fpsToggle", // Translation key
