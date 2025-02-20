@@ -137,14 +137,14 @@ public class JosefclientClient implements ClientModInitializer {
 			while (Keybinds.h.wasPressed()) {
 				if(client.player != null) {
 					toggleOverlay("Coords");
-					client.player.sendMessage(Text.of("Location HUD: " + getOverlay("Coords").visible), false);
+					client.player.sendMessage(Text.of("Location HUD: " + (getOverlay("Coords").visible ? "ON":"OFF")), true);
 					options.saveOptions();
 				}
 			}
 			while (Keybinds.debug.wasPressed()) {
 				if(client.player != null) {
 					toggleOverlay("Debug");
-					client.player.sendMessage(Text.of("Debug HUD: " + getOverlay("Debug").visible), false);
+					client.player.sendMessage(Text.of("Debug HUD: " + (getOverlay("Debug").visible ? "ON":"OFF")), true);
 					options.saveOptions();
 				}
 			}
@@ -161,7 +161,7 @@ public class JosefclientClient implements ClientModInitializer {
 			while (Keybinds.F5.wasPressed()) {
 				if(client.player != null) {
 					gravity = !gravity;
-					client.player.sendMessage(Text.of("Gravity disabled: " + gravity), false);
+					client.player.sendMessage(Text.of("Gravity disabled: " + (gravity ? "ON":"OFF")), true);
 					client.player.setNoGravity(gravity);
 				}
 			}
