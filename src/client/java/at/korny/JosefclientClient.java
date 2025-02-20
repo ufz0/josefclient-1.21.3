@@ -84,15 +84,13 @@ public class JosefclientClient implements ClientModInitializer {
 			String text;
 			if (maxDurability > 0) {
 				text = "[Durability] " + durability + "/" + maxDurability;
-			} else {
-				text = "[Durability] N/A";
+				int color = 0xFFFFFF;
+				if (maxDurability > 0) {
+					double percent = ((double) durability / maxDurability) * 100;
+					color = (percent > 75) ? 0x008000 : (percent > 25 ? 0xFFFF00 : 0xFF0000);
+				}
+				context.drawText(client.textRenderer, text, overlay.x, overlay.y, color, true);
 			}
-			int color = 0xFFFFFF;
-			if (maxDurability > 0) {
-				double percent = ((double) durability / maxDurability) * 100;
-				color = (percent > 75) ? 0x008000 : (percent > 25 ? 0xFFFF00 : 0xFF0000);
-			}
-			context.drawText(client.textRenderer, text, overlay.x, overlay.y, color, true);
 		}));
 		overlays.add(new Overlay("Debug", 10, 10, "DEBUG MENU", (context, client, overlay) -> {
 			if (client.player != null) {
