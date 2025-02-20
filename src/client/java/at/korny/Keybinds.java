@@ -15,6 +15,7 @@ public class Keybinds {
     public static KeyBinding rotate;
     public static KeyBinding F5;
     public static KeyBinding F6;
+    public static KeyBinding F7;
 
     public static void register() {
 
@@ -64,6 +65,12 @@ public class Keybinds {
                 "key.korny.modmenu",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_F6,
+                CATEGORY
+        ));
+        F7 = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "key.korny.waypoints",
+                InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_F7,
                 CATEGORY
         ));
     }

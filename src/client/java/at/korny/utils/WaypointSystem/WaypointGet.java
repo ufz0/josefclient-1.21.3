@@ -1,5 +1,6 @@
 package at.korny.utils.WaypointSystem;
 
+import at.korny.Josefclient;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 
@@ -10,22 +11,33 @@ import java.io.IOException;
 
 public class WaypointGet {
 
-    public static void readAndSendMessage() {
-        File file = new File("Waypoints.txt");
-
+    public static String readAndSendMessage() {
+        MinecraftClient client = MinecraftClient.getInstance();
+        String filename;
+        if(MinecraftClient.getInstance().isInSingleplayer())
+        {
+            String worldName = client.getServer().getSaveProperties().getLevelName().toString();
+            filename = worldName +"-waypoints.txt";
+        }else{
+            String serverIP = MinecraftClient.getInstance().getCurrentServerEntry().toString();
+            filename = serverIP +"-waypoints.txt";
+        }
+        File file = new File(filename);
+        String coords = "";
         if (!file.exists()) {
             MinecraftClient.getInstance().player.sendMessage(Text.literal("Fehler beim laden der Wegpunkte"), false);
-            return;
+            return "";
         }
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) { // Zeile für Zeile lesen
-                MinecraftClient.getInstance().player.sendMessage(Text.literal(line), false);
+                coords += line + "\n";
             }
         } catch (IOException e) {
             MinecraftClient.getInstance().player.sendMessage(Text.literal("Fehler beim lesen der Wegpunkte"), false);
             e.printStackTrace();
         }
+        return coords;
     }
 }
