@@ -22,6 +22,8 @@ import java.nio.file.StandardOpenOption;
 import java.util.*;
 
 import static at.korny.utils.MemoryUsageHelper.getMemoryUsagePercent;
+import static at.korny.utils.WaypointSystem.WaypointSet.saveWaypoint;
+import static at.korny.utils.WaypointSystem.WaypointSet.waypointKey;
 
 public class JosefclientClient implements ClientModInitializer {
 
@@ -118,11 +120,16 @@ public class JosefclientClient implements ClientModInitializer {
 		options.loadSettings();
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
-			if(client.player != null){
-				WaypointSet.WaypointSet();
-			}
 			biome = BiomeHelper.getPlayerBiome();
 			cpsHelper.update();
+
+		ClientTickEvents.END_CLIENT_TICK.register(clientWaypoint -> {
+				while (waypointKey.wasPressed()) {
+					saveWaypoint();
+					MinecraftClient.getInstance().player.sendMessage(Text.literal("Waypoint saved!"), true);
+
+				}
+			});
 
 			while (Keybinds.g.wasPressed()) {
 				if(client.player != null) {
