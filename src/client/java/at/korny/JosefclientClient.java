@@ -198,38 +198,38 @@ public class JosefclientClient implements ClientModInitializer {
 
 	private void loadSettings() {
 		if (!optionsFile.exists()) return;
-		try (BufferedReader reader = new BufferedReader(new FileReader(optionsFile))) {
-			String line;
+		try {
+			List<String> lines = Files.readAllLines(optionsFile.toPath());
 			Map<String, String> settings = new HashMap<>();
-			while ((line = reader.readLine()) != null) {
+			// Parse all mod options lines.
+			for (String line : lines) {
 				if (line.startsWith("josefclient.")) {
-					String[] parts = line.split("=");
+					String[] parts = line.split("=", 2);
 					if (parts.length == 2) {
 						settings.put(parts[0].trim(), parts[1].trim());
 					}
 				}
 			}
-			// Update each overlay from saved settings if available
 			for (Overlay overlay : overlays) {
 				String xKey = "josefclient." + overlay.id + ".x";
 				String yKey = "josefclient." + overlay.id + ".y";
-				String visibleKey = "josefclient." + overlay.id + ".visible";
+				String visKey = "josefclient." + overlay.id + ".visible";
 				if (settings.containsKey(xKey)) {
 					try {
 						overlay.x = Integer.parseInt(settings.get(xKey));
 					} catch (NumberFormatException e) {
-						LOGGER.error("Error parsing overlay {} x position", overlay.id, e);
+						LOGGER.error("Error parsing x for overlay {}: {}", overlay.id, settings.get(xKey));
 					}
 				}
 				if (settings.containsKey(yKey)) {
 					try {
 						overlay.y = Integer.parseInt(settings.get(yKey));
 					} catch (NumberFormatException e) {
-						LOGGER.error("Error parsing overlay {} y position", overlay.id, e);
+						LOGGER.error("Error parsing y for overlay {}: {}", overlay.id, settings.get(yKey));
 					}
 				}
-				if (settings.containsKey(visibleKey)) {
-					overlay.visible = Boolean.parseBoolean(settings.get(visibleKey));
+				if (settings.containsKey(visKey)) {
+					overlay.visible = Boolean.parseBoolean(settings.get(visKey));
 				}
 			}
 		} catch (IOException e) {
@@ -241,33 +241,17 @@ public class JosefclientClient implements ClientModInitializer {
 		File optionsFile = new File(MinecraftClient.getInstance().runDirectory, "options.txt");
 		try {
 			List<String> lines = new ArrayList<>();
-			if (optionsFile.exists()) {
-				lines = Files.readAllLines(optionsFile.toPath());
-			}
-			// Save overlay positions and visibility
-			Map<String, String> modOptions = new HashMap<>();
+			// Overwrite with our mod options.
 			for (Overlay o : overlays) {
-				modOptions.put("josefclient." + o.id + ".x", String.valueOf(o.x));
-				modOptions.put("josefclient." + o.id + ".y", String.valueOf(o.y));
-				modOptions.put("josefclient." + o.id + ".visible", String.valueOf(o.visible));
+				lines.add("josefclient." + o.id + ".x=" + o.x);
+				lines.add("josefclient." + o.id + ".y=" + o.y);
+				lines.add("josefclient." + o.id + ".visible=" + o.visible);
 			}
-			List<String> updatedLines = new ArrayList<>();
-			for (String line : lines) {
-				String key = line.split("=")[0].trim();
-				if (modOptions.containsKey(key)) {
-					updatedLines.add(key + "=" + modOptions.get(key));
-					modOptions.remove(key);
-				} else {
-					updatedLines.add(line);
-				}
-			}
-			for (Map.Entry<String, String> entry : modOptions.entrySet()) {
-				updatedLines.add(entry.getKey() + "=" + entry.getValue());
-			}
-			Files.write(optionsFile.toPath(), updatedLines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+			Files.write(optionsFile.toPath(), lines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 			LOGGER.info("Saved options");
 		} catch (IOException e) {
 			LOGGER.error("Error saving mod options!", e);
 		}
 	}
+
 }
