@@ -33,7 +33,6 @@ public class JosefclientClient implements ClientModInitializer {
 	private float targetYaw = 0.0f;  // The target yaw to rotate towards
 	private float currentYaw = 0.0f; // Current player's body yaw
 	public static boolean gravity = false;
-	public static boolean isCPressed = false;
 
 	// Instead of separate booleans and position fields, we store overlays in one list.
 	public static List<Overlay> overlays = new ArrayList<>();
@@ -155,7 +154,7 @@ public class JosefclientClient implements ClientModInitializer {
 				if (originalFov == -1) { // Falls das ursprüngliche FOV nicht gespeichert wurde
 					originalFov = client.options.getFov().getValue();
 				}
-				client.options.getFov().setValue( ZOOM_FOV); // Setze Zoom-FOV
+				client.options.getFov().setValue(ZOOM_FOV); // Setze Zoom-FOV
 			} else { // Falls die Taste losgelassen wird
 				if (originalFov != -1) { // Falls FOV gespeichert wurde
 					client.options.getFov().setValue( originalFov); // Ursprüngliches FOV wiederherstellen
@@ -167,7 +166,7 @@ public class JosefclientClient implements ClientModInitializer {
 				if (originalFov == -1) { // Falls das ursprüngliche FOV nicht gespeichert wurde
 					originalFov = client.options.getFov().getValue();
 				}
-				client.options.getFov().setValue( ANTI_ZOOM_FOV); // Setze Zoom-FOV
+				client.options.getFov().setValue(ANTI_ZOOM_FOV); // Setze Zoom-FOV
 			} else { // Falls die Taste losgelassen wird
 				if (originalFov != -1) { // Falls FOV gespeichert wurde
 					client.options.getFov().setValue( originalFov); // Ursprüngliches FOV wiederherstellen
