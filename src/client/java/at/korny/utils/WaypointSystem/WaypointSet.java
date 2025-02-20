@@ -34,8 +34,8 @@ public class WaypointSet{
         String position = x + " | " + y + " | " + z;
 
         try {
-            FileWriter writer = new FileWriter("Waypoints.txt");
-            writer.write(position);
+            FileWriter writer = new FileWriter("Waypoints.txt", true);
+            writer.write(position + "\n");
             writer.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
