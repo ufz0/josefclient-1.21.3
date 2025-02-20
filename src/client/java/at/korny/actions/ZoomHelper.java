@@ -4,12 +4,7 @@ import net.minecraft.client.MinecraftClient;
 
 public class ZoomHelper {
 
-    public static final float ZOOM_FOV = 30.0f; // Geringeres FOV = mehr Zoom
-    public static float originalFov; // Speichert das ursprüngliche FOV
+    public static final int ZOOM_FOV = 30; // Geringeres FOV = mehr Zoom
+    public static int originalFov; // Speichert das ursprüngliche FOV
 
-    public static void handleZoom(MinecraftClient client) {
-
-
-
-    }
 }

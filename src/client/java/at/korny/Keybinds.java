@@ -12,6 +12,7 @@ public class Keybinds {
     public static KeyBinding n;
     public static KeyBinding u;
     public static KeyBinding c;
+    public static KeyBinding x;
     public static KeyBinding debug;
     public static KeyBinding rotate;
     public static KeyBinding F5;
@@ -50,10 +51,10 @@ public class Keybinds {
                 GLFW.GLFW_KEY_C,
                 CATEGORY
         ));
-        debug = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.korny.debug", // Translation key
+        x = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "key.korny.BigAngle", // Translation key
                 InputUtil.Type.KEYSYM, // Type (KEYSYM = keyboard, MOUSE = mouse button)
-                GLFW.GLFW_KEY_F4,// Default key (Change to your preferred key)
+                GLFW.GLFW_KEY_H, // Default key (Change to your preferred key)
                 CATEGORY // Category (custom or use existing like "key.categories.misc")
         ));
         rotate = KeyBindingHelper.registerKeyBinding(new KeyBinding(

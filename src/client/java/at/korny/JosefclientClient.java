@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
+import static at.korny.actions.BigAngle.ANTI_ZOOM_FOV;
 import static at.korny.utils.MemoryUsageHelper.getMemoryUsagePercent;
 import static at.korny.utils.WaypointSystem.WaypointGet.readAndSendMessage;
 import static at.korny.utils.WaypointSystem.WaypointSet.saveWaypoint;
@@ -115,7 +116,7 @@ public class JosefclientClient implements ClientModInitializer {
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 
-			if(mcClient.isInSingleplayer() && mcClient.world != null || mcClient.getCurrentServerEntry() != null){
+			/*if(mcClient.isInSingleplayer() && mcClient.world != null || mcClient.getCurrentServerEntry() != null){
 				String filename;
 				if(MinecraftClient.getInstance().isInSingleplayer())
 				{
@@ -135,6 +136,8 @@ public class JosefclientClient implements ClientModInitializer {
 				}
 			}
 
+			 */
+
 			biome = BiomeHelper.getPlayerBiome();
 			cpsHelper.update();
 
@@ -147,14 +150,27 @@ public class JosefclientClient implements ClientModInitializer {
 			while (Keybinds.u.wasPressed()) {
 				readAndSendMessage(); // Wegpunkte laden, wenn Taste gedrückt wird
 			}
+
 			if (Keybinds.c.isPressed()) { // Prüft, ob "C" gedrückt wird
 				if (originalFov == -1) { // Falls das ursprüngliche FOV nicht gespeichert wurde
 					originalFov = client.options.getFov().getValue();
 				}
-				client.options.getFov().setValue((int) ZOOM_FOV); // Setze Zoom-FOV
+				client.options.getFov().setValue( ZOOM_FOV); // Setze Zoom-FOV
 			} else { // Falls die Taste losgelassen wird
 				if (originalFov != -1) { // Falls FOV gespeichert wurde
-					client.options.getFov().setValue((int) originalFov); // Ursprüngliches FOV wiederherstellen
+					client.options.getFov().setValue( originalFov); // Ursprüngliches FOV wiederherstellen
+					originalFov = -1; // Reset
+				}
+			}
+
+			if (Keybinds.x.isPressed()) { // Prüft, ob "X" gedrückt wird
+				if (originalFov == -1) { // Falls das ursprüngliche FOV nicht gespeichert wurde
+					originalFov = client.options.getFov().getValue();
+				}
+				client.options.getFov().setValue( ANTI_ZOOM_FOV); // Setze Zoom-FOV
+			} else { // Falls die Taste losgelassen wird
+				if (originalFov != -1) { // Falls FOV gespeichert wurde
+					client.options.getFov().setValue( originalFov); // Ursprüngliches FOV wiederherstellen
 					originalFov = -1; // Reset
 				}
 			}
