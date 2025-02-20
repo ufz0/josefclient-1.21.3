@@ -70,15 +70,32 @@ public class JosefclientClient implements ClientModInitializer {
 			}
 		}));
 		overlays.add(new Overlay("Durability", 10, 80, "[Durability] 000/000", (context, client, overlay) -> {
-			if (client.player != null) {
-				int durability = ItemDurability.getItemDurability(client.player);
-				if (durability != -1) {
-					int maxDurability = ItemDurability.getItemMaxDurability(client.player);
-					double percent = ((double) durability / maxDurability) * 100;
-					int color = (percent > 75) ? 0x008000 : (percent > 25 ? 0xFFFF00 : 0xFF0000);
-					context.drawText(client.textRenderer, "[Durability] " + durability + "/" + maxDurability, overlay.x, overlay.y, color, true);
-				}
+			boolean inModMenu = client.currentScreen instanceof at.korny.Screens.modMenu;
+			// If not in mod menu and no item is held, do not render.
+			if (!inModMenu && client.player != null && client.player.getMainHandStack().isEmpty()) {
+				return;
 			}
+			int durability;
+			int maxDurability;
+			if (client.player != null && !client.player.getMainHandStack().isEmpty()) {
+				durability = ItemDurability.getItemDurability(client.player);
+				maxDurability = ItemDurability.getItemMaxDurability(client.player);
+			} else {
+				durability = 0;
+				maxDurability = 0;
+			}
+			String text;
+			if (maxDurability > 0) {
+				text = "[Durability] " + durability + "/" + maxDurability;
+			} else {
+				text = "[Durability] N/A";
+			}
+			int color = 0xFFFFFF;
+			if (maxDurability > 0) {
+				double percent = ((double) durability / maxDurability) * 100;
+				color = (percent > 75) ? 0x008000 : (percent > 25 ? 0xFFFF00 : 0xFF0000);
+			}
+			context.drawText(client.textRenderer, text, overlay.x, overlay.y, color, true);
 		}));
 		overlays.add(new Overlay("Debug", 10, 10, "DEBUG MENU", (context, client, overlay) -> {
 			if (client.player != null) {

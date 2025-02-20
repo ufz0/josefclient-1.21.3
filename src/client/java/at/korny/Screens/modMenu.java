@@ -38,10 +38,9 @@ public class modMenu extends Screen {
         int startY = (this.height - (JosefclientClient.overlays.size() + 2) * (buttonHeight + verticalSpacing)) / 2;
 
         int btnIndex = 0;
-        // Create a toggle button for each overlay with status indicator.
+        // Create a toggle button for each overlay with a status indicator.
         for (Overlay overlay : JosefclientClient.overlays) {
             String status = overlay.visible ? "ON" : "OFF";
-            // Build the display text with colored status
             MutableText btnText = Text.literal("Display " + overlay.id + ": ")
                     .append(Text.literal(status)
                             .setStyle(Style.EMPTY.withColor(overlay.visible ? Formatting.GREEN : Formatting.RED)));
@@ -95,7 +94,7 @@ public class modMenu extends Screen {
 
     @Override
     public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
-        // Leave background empty so game overlays remain visible.
+        // Leave background empty so that game overlays remain visible.
     }
 
     @Override
@@ -111,18 +110,21 @@ public class modMenu extends Screen {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         MinecraftClient client = MinecraftClient.getInstance();
-        // Iterate through overlays to see if the click is within any overlay's bounds.
+        // Use the same padding as in Overlay.render.
+        int paddingX = 5;
+        int paddingY = 3;
+        // Iterate through overlays to see if the click is in any overlay's drag area.
         for (Overlay overlay : JosefclientClient.overlays) {
-            int overlayX = overlay.x;
-            int overlayY = overlay.y;
-            String sample = overlay.sampleText;
-            int width = client.textRenderer.getWidth(sample);
-            int height = client.textRenderer.fontHeight;
-            if (mouseX >= overlayX && mouseX <= overlayX + width &&
-                    mouseY >= overlayY && mouseY <= overlayY + height) {
+            int dragX = overlay.x - paddingX;
+            int dragY = overlay.y - paddingY;
+            int dragWidth = client.textRenderer.getWidth(overlay.sampleText) + paddingX * 2;
+            int dragHeight = client.textRenderer.fontHeight + paddingY * 2;
+            if (mouseX >= dragX && mouseX <= dragX + dragWidth &&
+                    mouseY >= dragY && mouseY <= dragY + dragHeight) {
                 draggingOverlay = overlay;
-                dragOffsetX = (int)(mouseX - overlayX);
-                dragOffsetY = (int)(mouseY - overlayY);
+                // Store offset relative to the overlay's top-left (without padding).
+                dragOffsetX = (int)(mouseX - overlay.x);
+                dragOffsetY = (int)(mouseY - overlay.y);
                 return true;
             }
         }
