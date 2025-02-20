@@ -145,7 +145,7 @@ public class JosefclientClient implements ClientModInitializer {
 				MinecraftClient.getInstance().player.sendMessage(Text.literal("Waypoint saved!"), true);
 
 			}
-			
+
 			if (Keybinds.zoom.isPressed()) {
 				if (!isZooming) {
 					orgFOV = client.options.getFov().getValue();
