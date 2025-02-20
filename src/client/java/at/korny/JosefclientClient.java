@@ -4,6 +4,7 @@ import at.korny.Screens.modMenu;
 import at.korny.overlay.Overlay;
 import at.korny.overlay.OverlayRenderer;
 import at.korny.utils.*;
+import at.korny.utils.WaypointSystem.WaypointGet;
 import at.korny.utils.WaypointSystem.WaypointSet;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -22,6 +23,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.*;
 
 import static at.korny.utils.MemoryUsageHelper.getMemoryUsagePercent;
+import static at.korny.utils.WaypointSystem.WaypointGet.readAndSendMessage;
 import static at.korny.utils.WaypointSystem.WaypointSet.saveWaypoint;
 
 public class JosefclientClient implements ClientModInitializer {
@@ -125,6 +127,11 @@ public class JosefclientClient implements ClientModInitializer {
 				MinecraftClient.getInstance().player.sendMessage(Text.literal("Waypoint saved!"), true);
 
 			}
+
+			while (Keybinds.u.wasPressed()) {
+				readAndSendMessage(); // Wegpunkte laden, wenn Taste gedrückt wird
+			}
+
 
 
 			while (Keybinds.g.wasPressed()) {
