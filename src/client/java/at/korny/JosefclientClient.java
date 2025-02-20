@@ -150,7 +150,6 @@ public class JosefclientClient implements ClientModInitializer {
 				readAndSendMessage(); // Wegpunkte laden, wenn Taste gedrückt wird
 				client.options.getFov().setValue(30);
 			}
-			LOGGER.info(String.valueOf(orgFOV));
 			if (Keybinds.zoom.isPressed()) {
 				if (!isZooming) {
 					orgFOV = client.options.getFov().getValue();
