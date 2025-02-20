@@ -3,7 +3,6 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL;
 
 public class Keybinds {
     public static final String CATEGORY = "Josef / korny client";
@@ -11,7 +10,7 @@ public class Keybinds {
     public static KeyBinding h;
     public static KeyBinding n;
     public static KeyBinding u;
-    public static KeyBinding c;
+    public static KeyBinding zoom;
     public static KeyBinding x;
     public static KeyBinding debug;
     public static KeyBinding rotate;
@@ -45,7 +44,7 @@ public class Keybinds {
                 GLFW.GLFW_KEY_U,
                 CATEGORY
         ));
-        c = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        zoom = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.korny.zoom",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_C,
@@ -79,6 +78,12 @@ public class Keybinds {
                 "key.korny.waypoints",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_F7,
+                CATEGORY
+        ));
+        debug = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "key.korny.debug",
+                InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_F4,
                 CATEGORY
         ));
     }

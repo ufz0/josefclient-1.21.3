@@ -12,14 +12,17 @@ import net.minecraft.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 import static at.korny.actions.BigAngle.ANTI_ZOOM_FOV;
+import static at.korny.actions.ZoomHelper.ZOOM_FOV;
+import static at.korny.actions.ZoomHelper.originalFov;
 import static at.korny.utils.MemoryUsageHelper.getMemoryUsagePercent;
 import static at.korny.utils.WaypointSystem.WaypointGet.readAndSendMessage;
 import static at.korny.utils.WaypointSystem.WaypointSet.saveWaypoint;
-import static at.korny.actions.ZoomHelper.ZOOM_FOV;
-import static at.korny.actions.ZoomHelper.originalFov;
+
 
 public class JosefclientClient implements ClientModInitializer {
 
@@ -27,17 +30,15 @@ public class JosefclientClient implements ClientModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	private final cpsHelper cpsHelper = new cpsHelper();
 	private String biome;
-
 	private boolean rotating = false;
-	private static float rotationSpeed = 300.0f; // Degrees per tick
-	private float targetYaw = 0.0f;  // The target yaw to rotate towards
-	private float currentYaw = 0.0f; // Current player's body yaw
+	private static float rotationSpeed = 300.0f;
+	private float targetYaw = 0.0f;
+	private float currentYaw = 0.0f;
 	public static boolean gravity = false;
-	public static boolean isCPressed = false;
-
-	// Instead of separate booleans and position fields, we store overlays in one list.
 	public static List<Overlay> overlays = new ArrayList<>();
 
+	public static int orgFOV;
+	public static boolean isZooming = false;
 	@Override
 	public void onInitializeClient() {
 		MinecraftClient mcClient = MinecraftClient.getInstance();
@@ -116,7 +117,7 @@ public class JosefclientClient implements ClientModInitializer {
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 
-			/*if(mcClient.isInSingleplayer() && mcClient.world != null || mcClient.getCurrentServerEntry() != null){
+			if(mcClient.isInSingleplayer() && mcClient.world != null || mcClient.getCurrentServerEntry() != null){
 				String filename;
 				if(MinecraftClient.getInstance().isInSingleplayer())
 				{
@@ -136,8 +137,6 @@ public class JosefclientClient implements ClientModInitializer {
 				}
 			}
 
-			 */
-
 			biome = BiomeHelper.getPlayerBiome();
 			cpsHelper.update();
 
@@ -149,31 +148,22 @@ public class JosefclientClient implements ClientModInitializer {
 
 			while (Keybinds.u.wasPressed()) {
 				readAndSendMessage(); // Wegpunkte laden, wenn Taste gedrückt wird
+				client.options.getFov().setValue(30);
+			}
+			LOGGER.info(String.valueOf(orgFOV));
+			if (Keybinds.zoom.isPressed()) {
+				if (!isZooming) {
+					orgFOV = client.options.getFov().getValue();
+					client.options.getFov().setValue(30);
+					isZooming = true;
+				}
+			} else {
+				if (isZooming) {
+					client.options.getFov().setValue(orgFOV);
+					isZooming = false;
+				}
 			}
 
-			if (Keybinds.c.isPressed()) { // Prüft, ob "C" gedrückt wird
-				if (originalFov == -1) { // Falls das ursprüngliche FOV nicht gespeichert wurde
-					originalFov = client.options.getFov().getValue();
-				}
-				client.options.getFov().setValue( ZOOM_FOV); // Setze Zoom-FOV
-			} else { // Falls die Taste losgelassen wird
-				if (originalFov != -1) { // Falls FOV gespeichert wurde
-					client.options.getFov().setValue( originalFov); // Ursprüngliches FOV wiederherstellen
-					originalFov = -1; // Reset
-				}
-			}
-
-			if (Keybinds.x.isPressed()) { // Prüft, ob "X" gedrückt wird
-				if (originalFov == -1) { // Falls das ursprüngliche FOV nicht gespeichert wurde
-					originalFov = client.options.getFov().getValue();
-				}
-				client.options.getFov().setValue( ANTI_ZOOM_FOV); // Setze Zoom-FOV
-			} else { // Falls die Taste losgelassen wird
-				if (originalFov != -1) { // Falls FOV gespeichert wurde
-					client.options.getFov().setValue( originalFov); // Ursprüngliches FOV wiederherstellen
-					originalFov = -1; // Reset
-				}
-			}
 
 
 
