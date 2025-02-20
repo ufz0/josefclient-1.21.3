@@ -28,7 +28,6 @@ public class JosefclientClient implements ClientModInitializer {
 	public static final String MOD_ID = "josefclient";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	private final cpsHelper cpsHelper = new cpsHelper();
-	private static final File optionsFile = new File(MinecraftClient.getInstance().runDirectory, "options.txt");
 	private String biome;
 
 	private boolean rotating = false;
@@ -116,7 +115,7 @@ public class JosefclientClient implements ClientModInitializer {
 		}));
 
 		// Load overlay settings AFTER creation so saved positions/visibility are applied.
-		loadSettings();
+		options.loadSettings();
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if(client.player != null){
@@ -129,21 +128,21 @@ public class JosefclientClient implements ClientModInitializer {
 				if(client.player != null) {
 					toggleOverlay("FPS");
 					client.player.sendMessage(Text.of("FPS HUD: " + getOverlay("FPS").visible), false);
-					saveOptions();
+					options.saveOptions();
 				}
 			}
 			while (Keybinds.h.wasPressed()) {
 				if(client.player != null) {
 					toggleOverlay("Coords");
 					client.player.sendMessage(Text.of("Location HUD: " + getOverlay("Coords").visible), false);
-					saveOptions();
+					options.saveOptions();
 				}
 			}
 			while (Keybinds.debug.wasPressed()) {
 				if(client.player != null) {
 					toggleOverlay("Debug");
 					client.player.sendMessage(Text.of("Debug HUD: " + getOverlay("Debug").visible), false);
-					saveOptions();
+					options.saveOptions();
 				}
 			}
 			while (Keybinds.F6.wasPressed()) {
@@ -197,89 +196,4 @@ public class JosefclientClient implements ClientModInitializer {
 		}
 		return null;
 	}
-
-	private void loadSettings() {
-		if (!optionsFile.exists()) return;
-		try {
-			List<String> lines = Files.readAllLines(optionsFile.toPath());
-			for (String line : lines) {
-				if (!line.contains("=")) continue;
-				String[] parts = line.split("=", 2);
-				if (parts.length != 2) continue;
-				String key = parts[0].trim();
-				String value = parts[1].trim();
-				for (Overlay overlay : overlays) {
-					String prefix = "josefclient." + overlay.id + ".";
-					if (key.equals(prefix + "x")) {
-						try {
-							overlay.x = Integer.parseInt(value);
-						} catch (NumberFormatException e) {
-							LOGGER.error("Error parsing {} for {}: {}", key, overlay.id, value);
-						}
-					} else if (key.equals(prefix + "y")) {
-						try {
-							overlay.y = Integer.parseInt(value);
-						} catch (NumberFormatException e) {
-							LOGGER.error("Error parsing {} for {}: {}", key, overlay.id, value);
-						}
-					} else if (key.equals(prefix + "visible")) {
-						overlay.visible = Boolean.parseBoolean(value);
-					}
-				}
-			}
-		} catch (IOException e) {
-			LOGGER.error("Failed to load settings!", e);
-		}
-	}
-
-	public static void saveOptions() {
-		// Build our mod options map.
-		Map<String, String> modOptions = new HashMap<>();
-		for (Overlay o : overlays) {
-			modOptions.put("josefclient." + o.id + ".x", String.valueOf(o.x));
-			modOptions.put("josefclient." + o.id + ".y", String.valueOf(o.y));
-			modOptions.put("josefclient." + o.id + ".visible", String.valueOf(o.visible));
-		}
-		// Read existing options.
-		List<String> lines = new ArrayList<>();
-		if (optionsFile.exists()) {
-			try {
-				lines = Files.readAllLines(optionsFile.toPath());
-			} catch (IOException e) {
-				LOGGER.error("Error reading options file", e);
-			}
-		}
-		// Create a merged list.
-		List<String> newLines = new ArrayList<>();
-		Set<String> keysFound = new HashSet<>();
-		for (String line : lines) {
-			boolean updated = false;
-			for (Map.Entry<String, String> entry : modOptions.entrySet()) {
-				String key = entry.getKey();
-				if (line.startsWith(key + "=")) {
-					newLines.add(key + "=" + entry.getValue());
-					keysFound.add(key);
-					updated = true;
-					break;
-				}
-			}
-			if (!updated) {
-				newLines.add(line);
-			}
-		}
-		// Append keys that were not already present.
-		for (Map.Entry<String, String> entry : modOptions.entrySet()) {
-			if (!keysFound.contains(entry.getKey())) {
-				newLines.add(entry.getKey() + "=" + entry.getValue());
-			}
-		}
-		try {
-			Files.write(optionsFile.toPath(), newLines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-			LOGGER.info("Saved options");
-		} catch (IOException e) {
-			LOGGER.error("Error saving mod options!", e);
-		}
-	}
-
-
 }

@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "josefclient",
-	"version": "v0.8.2-alpha",
+	"version": "v0.9.0-alpha",
 	"name": "josefclient",
 	"description": "This is Josefclient",
 	"authors": [

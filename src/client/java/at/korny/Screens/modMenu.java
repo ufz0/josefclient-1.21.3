@@ -61,7 +61,7 @@ public class modMenu extends Screen {
                     for (Overlay overlay : JosefclientClient.overlays) {
                         overlay.resetPosition();
                     }
-                    JosefclientClient.saveOptions();
+                    at.korny.options.saveOptions();
                 }
         ).dimensions(centerX, startY + btnIndex * (buttonHeight + verticalSpacing), buttonWidth, buttonHeight).build());
         buttons.add(resetBtn);
@@ -84,7 +84,7 @@ public class modMenu extends Screen {
                             .setStyle(Style.EMPTY.withColor(overlay.visible ? Formatting.GREEN : Formatting.RED)));
             buttons.get(i).setMessage(btnText);
         }
-        JosefclientClient.saveOptions();
+        at.korny.options.saveOptions();
     }
 
     @Override
@@ -145,7 +145,7 @@ public class modMenu extends Screen {
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         if (draggingOverlay != null) {
             draggingOverlay = null;
-            JosefclientClient.saveOptions();
+            at.korny.options.saveOptions();
             return true;
         }
         return super.mouseReleased(mouseX, mouseY, button);
