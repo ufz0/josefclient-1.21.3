@@ -43,15 +43,19 @@ public class JosefclientClient implements ClientModInitializer {
 	public static boolean showDurability = false;
 	public static boolean showCPS = false;
 
+	public static int fpsX = 10;
+	public static int fpsY = 15;
 
+	public static boolean isInModMenu = false;
 	@Override
 	public void onInitializeClient() {
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
-		loadSettings();
 		MinecraftClient mcClient = MinecraftClient.getInstance();
+		loadSettings();
 		Keybinds.register();
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
+			isInModMenu = String.valueOf(client.currentScreen).contains("at.korny.Screens.modMenu");
 			biome = BiomeHelper.getPlayerBiome();
 			cpsHelper.update();
 			while (Keybinds.g.wasPressed()) {
@@ -84,7 +88,7 @@ public class JosefclientClient implements ClientModInitializer {
 			}
 			while(Keybinds.F6.wasPressed()){
 				assert client.player != null;
-				MinecraftClient.getInstance().setScreen(new modMenu());
+				client.setScreen(new modMenu());
 			}
 
 			// If rotating is true, incrementally rotate the player smoothly
@@ -98,7 +102,6 @@ public class JosefclientClient implements ClientModInitializer {
 				client.player.setYaw(currentYaw);  // Update yaw (affects both body and head)
 				client.player.setBodyYaw(currentYaw); // Update body yaw (only affects the body)
 			}
-
 		});
 
 		// Render FPS overlay
@@ -120,7 +123,7 @@ public class JosefclientClient implements ClientModInitializer {
 		int fps = FPSHelper.getFPS();
 
 		if (client.player != null) {
-			context.drawText(client.textRenderer, "[FPS] " + String.valueOf(fps), 10, 15, 0xFFFFFF, true);
+			context.drawText(client.textRenderer, "[FPS] " + String.valueOf(fps), fpsX, fpsY, 0xFFFFFF, true);
 		}
 	}
 	private void coordsRenderer(DrawContext context, RenderTickCounter renderTickCounter) {
@@ -240,6 +243,10 @@ public class JosefclientClient implements ClientModInitializer {
 			showDebug = settings.getOrDefault("josefclient.showDebug", false);
 			showDurability = settings.getOrDefault("josefclient.showDurability", false);
 			showCPS = settings.getOrDefault("josefclient.showCPS", false);
+			// TODO: Fix this. Error: Caused by: java.lang.NumberFormatException: For input string: "false"
+//			fpsX = Integer.parseInt(String.valueOf(settings.get("josefclient.fpsX")));
+//			fpsY = Integer.parseInt(String.valueOf(settings.get("josefclient.fpsY")));
+
 
 		} catch (IOException e) {
 			LOGGER.error("Failed to load settings!", e);
@@ -263,6 +270,8 @@ public class JosefclientClient implements ClientModInitializer {
 			modOptions.put("josefclient.showDebug", String.valueOf(showDebug));
 			modOptions.put("josefclient.showDurability", String.valueOf(showDurability));
 			modOptions.put("josefclient.showCPS", String.valueOf(showCPS));
+			modOptions.put("josefclient.fpsX", String.valueOf(fpsX));
+			modOptions.put("josefclient.fpsY", String.valueOf(fpsY));
 
 			// Neue Datei mit aktualisierten Werten schreiben
 			List<String> updatedLines = new ArrayList<>();

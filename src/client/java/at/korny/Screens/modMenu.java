@@ -1,16 +1,19 @@
 package at.korny.Screens;
 
 import at.korny.JosefclientClient;
+import at.korny.Keybinds;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
-
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class modMenu extends Screen {
     private final List<ButtonWidget> buttons = new ArrayList<>();
+    private int delayTicks = 0;
 
     public modMenu() {
         super(Text.literal("Josef Client Modmenu"));
@@ -73,8 +76,39 @@ public class modMenu extends Screen {
     public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
 
     }
+
+    @Override
+    public boolean shouldPause() {
+        return false;
+    }
     @Override
     public boolean shouldCloseOnEsc() {
         return true;
     }
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (super.keyPressed(keyCode, scanCode, modifiers)) {
+            return true;
+        }
+
+        if (Keybinds.up.matchesKey(keyCode, scanCode)) {
+            JosefclientClient.fpsY -= 5;
+            return true;
+        }
+        if (Keybinds.down.matchesKey(keyCode, scanCode)) {
+            JosefclientClient.fpsY += 5;
+            return true;
+        }
+        if (Keybinds.left.matchesKey(keyCode, scanCode)) {
+            JosefclientClient.fpsX -= 5;
+            return true;
+        }
+        if (Keybinds.right.matchesKey(keyCode, scanCode)) {
+            JosefclientClient.fpsX += 5;
+            return true;
+        }
+
+        return false;
+    }
+
 }
