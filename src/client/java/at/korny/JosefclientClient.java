@@ -4,6 +4,7 @@ import at.korny.Screens.modMenu;
 import at.korny.overlay.Overlay;
 import at.korny.overlay.OverlayRenderer;
 import at.korny.utils.*;
+import at.korny.utils.WaypointSystem.WaypointSet;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
@@ -121,6 +122,9 @@ public class JosefclientClient implements ClientModInitializer {
 		loadSettings();
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
+			if(client.player != null){
+				WaypointSet.WaypointSet();
+			}
 			biome = BiomeHelper.getPlayerBiome();
 			cpsHelper.update();
 
@@ -179,6 +183,7 @@ public class JosefclientClient implements ClientModInitializer {
 			}
 		});
 	}
+
 
 	// Utility methods for toggling and retrieving overlays by ID
 	public static void toggleOverlay(String id) {
