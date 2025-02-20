@@ -16,7 +16,6 @@ import java.io.IOException;
 
 public class WaypointSet{
 
-    public static KeyBinding waypointKey;
 
         // Taste registrieren (Standard: "N")
 

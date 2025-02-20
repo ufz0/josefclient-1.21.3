@@ -23,7 +23,6 @@ import java.util.*;
 
 import static at.korny.utils.MemoryUsageHelper.getMemoryUsagePercent;
 import static at.korny.utils.WaypointSystem.WaypointSet.saveWaypoint;
-import static at.korny.utils.WaypointSystem.WaypointSet.waypointKey;
 
 public class JosefclientClient implements ClientModInitializer {
 
@@ -121,18 +120,17 @@ public class JosefclientClient implements ClientModInitializer {
 			biome = BiomeHelper.getPlayerBiome();
 			cpsHelper.update();
 
-		ClientTickEvents.END_CLIENT_TICK.register(clientWaypoint -> {
-				while (waypointKey.wasPressed()) {
-					saveWaypoint();
-					MinecraftClient.getInstance().player.sendMessage(Text.literal("Waypoint saved!"), true);
+			while (Keybinds.n.wasPressed()) {
+				saveWaypoint();
+				MinecraftClient.getInstance().player.sendMessage(Text.literal("Waypoint saved!"), true);
 
-				}
-			});
+			}
+
 
 			while (Keybinds.g.wasPressed()) {
 				if(client.player != null) {
 					toggleOverlay("FPS");
-					client.player.sendMessage(Text.of("FPS HUD: " + getOverlay("FPS").visible), false);
+					client.player.sendMessage(Text.of("FPS HUD: " + (getOverlay("FPS").visible ? "ON":"OFF")), true);
 					options.saveOptions();
 				}
 			}

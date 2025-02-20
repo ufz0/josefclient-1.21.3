@@ -12,9 +12,9 @@ public class Keybinds {
     public static KeyBinding n;
     public static KeyBinding debug;
     public static KeyBinding rotate;
-    public static KeyBinding worldInfo;
     public static KeyBinding F5;
     public static KeyBinding F6;
+
     public static void register() {
 
         g = KeyBindingHelper.registerKeyBinding(new KeyBinding(
